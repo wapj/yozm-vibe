@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}RSS Wiki{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; color: #222; }
+    header nav a { margin-right: 0.75rem; }
+    header { border-bottom: 1px solid #ddd; margin-bottom: 1.5rem; padding-bottom: 0.5rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f4f4f4; }
+    form.inline { display: inline; }
+    button { cursor: pointer; }
+    .muted { color: #888; }
+    .badge-unread { background: #ffd; border: 1px solid #e2c200; padding: 0 0.25rem; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="margin:0 0 0.25rem 0;"><a href="/" style="text-decoration:none;color:inherit;">RSS Wiki</a></h1>
+    <nav>
+      <a href="/">카테고리</a>
+      <a href="/categories/manage">관리</a>
+      <a href="/feeds">피드</a>
+      <a href="/search">검색</a>
+      <a href="/logs">로그</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

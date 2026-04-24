@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}카테고리 — RSS Wiki{% endblock %}
+{% block content %}
+<h1>카테고리</h1>
+
+{% if categories %}
+<ul>
+  {% for c in categories %}
+  <li data-category-id="{{ c.id }}">
+    <a href="/categories/{{ c.id }}">{{ c.name }}</a>
+    {% if c.has_unread_updates %}
+    <span class="badge-unread">업데이트</span>
+    {% endif %}
+    {% if c.description %}
+    <div class="muted">{{ c.description }}</div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">아직 카테고리가 없습니다. 피드를 추가하고 수집을 기다려 주세요.</p>
+{% endif %}
+{% endblock %}

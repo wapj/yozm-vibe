@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}카테고리 관리 — RSS Wiki{% endblock %}
+{% block content %}
+<h1>카테고리 관리</h1>
+
+{% if categories %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>이름</th>
+      <th>상위</th>
+      <th>수정</th>
+      <th>이름 변경</th>
+      <th>병합</th>
+      <th>상위 설정</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in categories %}
+    <tr data-category-id="{{ c.id }}">
+      <td>{{ c.id }}</td>
+      <td>{{ c.name }}</td>
+      <td>{{ c.parent_name or "" }}</td>
+      <td>{% if c.is_user_edited %}user{% endif %}</td>
+      <td>
+        <form class="inline" action="/categories/{{ c.id }}/rename" method="post">
+          <input type="text" name="name" value="{{ c.name }}" required>
+          <button type="submit">변경</button>
+        </form>
+      </td>
+      <td>
+        <form class="inline" action="/categories/{{ c.id }}/merge" method="post"
+              onsubmit="return confirm('이 카테고리를 선택한 카테고리로 병합하시겠습니까?');">
+          <input type="number" name="target_id" min="1" placeholder="대상 ID" required>
+          <button type="submit">병합</button>
+        </form>
+      </td>
+      <td>
+        <form class="inline" action="/categories/{{ c.id }}/parent" method="post">
+          <input type="number" name="parent_id" min="1" placeholder="상위 ID (비우면 해제)">
+          <button type="submit">지정</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">등록된 카테고리가 없습니다.</p>
+{% endif %}
+{% endblock %}

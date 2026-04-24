@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}검색 — RSS Wiki{% endblock %}
+{% block content %}
+<h1>검색</h1>
+
+<form action="/search" method="get">
+  <input type="text" name="q" value="{{ query }}" placeholder="검색어" autofocus>
+  <button type="submit">검색</button>
+</form>
+
+{% if query %}
+{% if results %}
+<ul>
+  {% for r in results %}
+  <li data-article-id="{{ r.id }}">
+    <a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.title }}</a>
+    {% if r.published_at %} — <span class="muted">{{ r.published_at }}</span>{% endif %}
+    {% if r.category_name %}
+    [<a href="/categories/{{ r.category_id }}">{{ r.category_name }}</a>]
+    {% endif %}
+    {% if r.llm_summary %}
+    <p>{{ r.llm_summary }}</p>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">(검색 결과 없음)</p>
+{% endif %}
+{% endif %}
+{% endblock %}

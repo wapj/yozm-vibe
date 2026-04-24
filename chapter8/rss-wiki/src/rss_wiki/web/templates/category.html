@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} — RSS Wiki{% endblock %}
+{% block content %}
+<p><a href="/">← 카테고리 목록</a></p>
+<h1>{{ category.name }}</h1>
+{% if category.description %}
+<p class="muted">{{ category.description }}</p>
+{% endif %}
+
+<section class="wiki">
+  {% if content_html %}
+  {{ content_html|safe }}
+  {% else %}
+  <p class="muted">위키 페이지가 아직 생성되지 않았습니다.</p>
+  {% endif %}
+</section>
+
+{% if children %}
+<h2>하위 카테고리</h2>
+<ul>
+  {% for c in children %}
+  <li data-category-id="{{ c.id }}">
+    <a href="/categories/{{ c.id }}">{{ c.name }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>원문</h2>
+{% if articles %}
+<ul>
+  {% for a in articles %}
+  <li data-article-id="{{ a.id }}">
+    <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.title }}</a>
+    {% if a.published_at %} — <span class="muted">{{ a.published_at }}</span>{% endif %}
+    {% if a.llm_summary %}
+    <p>{{ a.llm_summary }}</p>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">(원문 없음)</p>
+{% endif %}
+{% endblock %}
