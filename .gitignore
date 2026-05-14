@@ -211,3 +211,6 @@ node_modules/
 
 # External repositories (not tracked)
 langfuse/
+
+# LLMOps artifacts
+app_runs.jsonl
