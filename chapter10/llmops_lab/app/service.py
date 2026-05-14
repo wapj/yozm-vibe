@@ -3,7 +3,12 @@ from dataclasses import dataclass
 from .prompting import SupportTicket, render_prompt
 from .claude_runner import run_claude, ClaudeResult
 from .evaluator import evaluate, EvalResult
-from .langfuse_ops import record_support_run
+from .langfuse_ops import (
+    support_ticket_trace,
+    claude_generation,
+    quality_evaluator,
+    record_scores,
+)
 from .history import append_run
 
 
@@ -16,14 +21,42 @@ class RunResult:
 
 def process_ticket(ticket: SupportTicket) -> RunResult:
     prompt = render_prompt(ticket)
-    claude_result = run_claude(prompt)
-    eval_result = evaluate(
-        answer=claude_result.answer,
-        required_keywords=ticket.required_keywords,
-    )
+    model = "sonnet"
 
-    # 두 곳에 기록
-    record_support_run(ticket, prompt, claude_result, eval_result)
+    with support_ticket_trace(ticket) as root:
+        with claude_generation(prompt, model) as gen:
+            claude_result = run_claude(prompt)
+            usage = claude_result.raw_payload.get("usage", {})
+            gen.update(
+                output=claude_result.answer,
+                model=claude_result.model,
+                cost_details={"total": claude_result.cost_usd},
+                usage_details={
+                    "input": usage.get("input_tokens", 0),
+                    "output": usage.get("output_tokens", 0),
+                    "cache_read_input_tokens": usage.get("cache_read_input_tokens", 0),
+                    "cache_creation_input_tokens": usage.get(
+                        "cache_creation_input_tokens", 0
+                    ),
+                },
+            )
+
+        with quality_evaluator(ticket.required_keywords) as ev:
+            eval_result = evaluate(
+                answer=claude_result.answer,
+                required_keywords=ticket.required_keywords,
+            )
+            ev.update(
+                output={
+                    "keyword_coverage": eval_result.keyword_coverage,
+                    "format_ok": eval_result.format_ok,
+                    "response_length_ok": eval_result.length_ok,
+                },
+            )
+
+        record_scores(root, claude_result, eval_result)
+        root.update(output=claude_result.answer)
+
     append_run(ticket, claude_result, eval_result)
 
     return RunResult(
