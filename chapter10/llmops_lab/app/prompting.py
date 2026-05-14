@@ -1,8 +1,5 @@
 # app/prompting.py
-from pathlib import Path
 from dataclasses import dataclass, field
-
-PROMPT_PATH = Path("prompts/support_answer.md")
 
 
 @dataclass
@@ -16,14 +13,14 @@ class SupportTicket:
     required_keywords: list[str] = field(default_factory=list)
 
 
-def render_prompt(ticket: SupportTicket) -> str:
-    template = PROMPT_PATH.read_text(encoding="utf-8")
-    return template.format(
+def compile_prompt(prompt, ticket: SupportTicket) -> str:
+    """Langfuse Prompt 객체와 티켓을 받아 렌더링된 문자열을 반환"""
+    return prompt.compile(
         ticket_id=ticket.ticket_id,
         customer_id=ticket.customer_id,
         product=ticket.product,
         priority=ticket.priority,
         subject=ticket.subject,
-        message=ticket.message,
         required_keywords=", ".join(ticket.required_keywords),
+        message=ticket.message,
     )

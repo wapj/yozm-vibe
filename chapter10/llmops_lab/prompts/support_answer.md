@@ -1,12 +1,12 @@
 고객 지원 답변 초안을 작성하세요.
 
-티켓 ID: {ticket_id}
-고객 ID: {customer_id}
-제품: {product}
-우선순위: {priority}
-제목: {subject}
-문의 내용: {message}
-필수 키워드: {required_keywords}
+티켓 ID: {{ticket_id}}
+고객 ID: {{customer_id}}
+제품: {{product}}
+우선순위: {{priority}}
+제목: {{subject}}
+문의 내용: {{message}}
+필수 키워드: {{required_keywords}}
 
 출력은 반드시 아래 세 섹션을 이 순서대로 포함하세요. 섹션 제목은 정확히 그대로 사용하고 다른 제목으로 바꾸지 마세요.
 

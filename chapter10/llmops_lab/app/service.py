@@ -1,9 +1,10 @@
 # app/service.py
 from dataclasses import dataclass
-from .prompting import SupportTicket, render_prompt
+from .prompting import SupportTicket, compile_prompt
 from .claude_runner import run_claude, ClaudeResult
 from .evaluator import evaluate, EvalResult
 from .langfuse_ops import (
+    get_client,
     support_ticket_trace,
     claude_generation,
     quality_evaluator,
@@ -20,12 +21,13 @@ class RunResult:
 
 
 def process_ticket(ticket: SupportTicket) -> RunResult:
-    prompt = render_prompt(ticket)
+    client = get_client()
+    prompt_obj = client.get_prompt("support-answer-v1", label="production")
+    rendered = compile_prompt(prompt_obj, ticket)
     model = "sonnet"
-
     with support_ticket_trace(ticket) as root:
-        with claude_generation(prompt, model) as gen:
-            claude_result = run_claude(prompt)
+        with claude_generation(rendered, model=model, prompt=prompt_obj) as gen:
+            claude_result = run_claude(rendered)
             usage = claude_result.raw_payload.get("usage", {})
             gen.update(
                 output=claude_result.answer,

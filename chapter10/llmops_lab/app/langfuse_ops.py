@@ -1,7 +1,9 @@
 # app/langfuse_ops.py
 import os
 from contextlib import contextmanager
+
 from langfuse import Langfuse, propagate_attributes
+
 from .prompting import SupportTicket
 from .claude_runner import ClaudeResult
 from .evaluator import EvalResult
@@ -49,15 +51,19 @@ def support_ticket_trace(ticket: SupportTicket):
 
 
 @contextmanager
-def claude_generation(prompt: str, model: str):
-    """Claude 호출을 감싸는 generation span. 이 컨텍스트 내부의 실제 호출 시간이 OTel start/end로 기록된다."""
+def claude_generation(prompt_text: str, model: str, prompt=None):
+    """Claude 호출을 감싸는 generation span."""
     client = get_client()
-    with client.start_as_current_observation(
-        name="claude-p-answer",
-        as_type="generation",
-        model=model,
-        input=prompt,
-    ) as gen:
+    kwargs = {
+        "name": "claude-p-answer",
+        "as_type": "generation",
+        "model": model,
+        "input": prompt_text,
+    }
+    if prompt is not None:
+        kwargs["prompt"] = prompt
+
+    with client.start_as_current_observation(**kwargs) as gen:
         yield gen
 
 
