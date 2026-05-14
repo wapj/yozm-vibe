@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}피드 수정 — RSS Wiki{% endblock %}
+{% block content %}
+<h2>피드 수정</h2>
+{% include "_flash.html" %}
+<form method="post" action="/feeds/{{ feed.id }}">
+    <p>
+        <label>이름
+            <input type="text" name="name" value="{{ feed.name }}" required>
+        </label>
+    </p>
+    <p>
+        <label>URL (변경 시 정규화 후 중복 검증)
+            <input type="url" name="url" value="{{ feed.url }}">
+        </label>
+    </p>
+    <p>
+        <label>
+            <input type="checkbox" name="enabled" {% if feed.enabled %}checked{% endif %}>
+            활성
+        </label>
+    </p>
+    <p>
+        <button type="submit" class="btn btn-primary">저장</button>
+        <a href="/feeds" class="btn">취소</a>
+    </p>
+</form>
+{% endblock %}

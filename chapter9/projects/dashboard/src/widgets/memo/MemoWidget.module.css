@@ -1,0 +1,67 @@
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #c00;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.done span {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.deleteBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #888;
+  font-size: 1rem;
+  line-height: 1;
+  margin-left: auto;
+}
+
+.deleteBtn:hover {
+  color: #c00;
+}

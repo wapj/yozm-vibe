@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}RSS Wiki{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="gnb">
+        <a class="gnb-brand" href="/">RSS Wiki</a>
+        <nav class="gnb-nav">
+            <a href="/magazines"{% if active_nav == "magazines" %} class="active"{% endif %}>매거진</a>
+            <a href="/categories"{% if active_nav == "categories" %} class="active"{% endif %}>카테고리</a>
+            <a href="/tags"{% if active_nav == "tags" %} class="active"{% endif %}>태그</a>
+            <a href="/feeds"{% if active_nav == "feeds" %} class="active"{% endif %}>피드 관리</a>
+        </nav>
+    </header>
+    <main class="container">{% block content %}{% endblock %}</main>
+</body>
+</html>

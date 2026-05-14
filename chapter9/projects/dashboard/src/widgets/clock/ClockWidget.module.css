@@ -1,0 +1,25 @@
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.date {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.time {
+  font-size: 2rem;
+  font-family: monospace;
+  font-weight: 500;
+  color: #222;
+}

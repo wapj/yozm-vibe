@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}피드 — RSS Wiki{% endblock %}
+{% block content %}
+<h2>피드</h2>
+{% include "_flash.html" %}
+<form method="post" action="/feeds">
+    <p>
+        <label>새 피드 URL
+            <input type="url" name="url" required>
+        </label>
+        <label>이름(선택)
+            <input type="text" name="name">
+        </label>
+        <button type="submit" class="btn btn-primary">추가</button>
+    </p>
+</form>
+
+{% if feeds %}
+<table>
+    <thead>
+        <tr><th>이름</th><th>URL</th><th>활성</th><th>연속 실패</th><th>마지막 수집</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for feed in feeds %}
+        <tr>
+            <td>{{ feed.name }}</td>
+            <td><a href="{{ feed.url }}">{{ feed.url }}</a></td>
+            <td>{% if feed.enabled %}<span class="badge badge-success">활성</span>{% else %}<span class="badge badge-danger">비활성</span>{% endif %}</td>
+            <td>{{ feed.consecutive_failures }}</td>
+            <td>{{ feed.last_fetched_at or "—" }}</td>
+            <td>
+                <a href="/feeds/{{ feed.id }}/edit" class="btn">수정</a>
+                <form method="post" action="/feeds/{{ feed.id }}/toggle" style="display:inline">
+                    <button type="submit" class="btn">토글</button>
+                </form>
+                <form method="post" action="/feeds/{{ feed.id }}/reset" style="display:inline">
+                    <button type="submit" class="btn">실패 리셋</button>
+                </form>
+                <form method="post" action="/feeds/{{ feed.id }}/delete" style="display:inline" onsubmit="return confirm('삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>아직 등록된 피드가 없습니다.</p>
+{% endif %}
+{% endblock %}

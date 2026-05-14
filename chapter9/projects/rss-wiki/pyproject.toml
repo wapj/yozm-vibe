@@ -1,0 +1,30 @@
+[project]
+name = "rss-wiki"
+version = "0.1.0"
+description = "RSS-based wiki generator with LLM summarization"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "feedparser",
+    "httpx",
+    "trafilatura",
+    "fastapi",
+    "uvicorn[standard]",
+    "jinja2",
+    "markdown-it-py",
+    "python-multipart",
+]
+
+[project.scripts]
+rss-wiki = "rss_wiki.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

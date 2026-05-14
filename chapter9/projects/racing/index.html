@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>경마 게임</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <span id="balance">잔고: 1000</span>
+    <button id="mute-btn" aria-label="음소거 토글">🔊</button>
+  </header>
+
+  <main>
+    <div id="track">
+
+      <div class="lane" data-horse="Thunder">
+        <div class="lane-label">Thunder</div>
+        <div class="track-area">
+          <div class="start-line"></div>
+          <span class="horse">🐎</span>
+          <div class="finish-line"></div>
+        </div>
+      </div>
+
+      <div class="lane" data-horse="Mystic">
+        <div class="lane-label">Mystic</div>
+        <div class="track-area">
+          <div class="start-line"></div>
+          <span class="horse">🐎</span>
+          <div class="finish-line"></div>
+        </div>
+      </div>
+
+      <div class="lane" data-horse="Golden">
+        <div class="lane-label">Golden</div>
+        <div class="track-area">
+          <div class="start-line"></div>
+          <span class="horse">🐎</span>
+          <div class="finish-line"></div>
+        </div>
+      </div>
+
+      <div class="lane" data-horse="Emerald">
+        <div class="lane-label">Emerald</div>
+        <div class="track-area">
+          <div class="start-line"></div>
+          <span class="horse">🐎</span>
+          <div class="finish-line"></div>
+        </div>
+      </div>
+
+      <div class="lane" data-horse="Shadow">
+        <div class="lane-label">Shadow</div>
+        <div class="track-area">
+          <div class="start-line"></div>
+          <span class="horse">🐎</span>
+          <div class="finish-line"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div id="bet-panel">
+
+      <div id="horse-select">
+        <label>
+          <input type="radio" name="horse" value="Thunder" />
+          <span class="horse-btn" data-horse="Thunder">Thunder</span>
+        </label>
+        <label>
+          <input type="radio" name="horse" value="Mystic" />
+          <span class="horse-btn" data-horse="Mystic">Mystic</span>
+        </label>
+        <label>
+          <input type="radio" name="horse" value="Golden" />
+          <span class="horse-btn" data-horse="Golden">Golden</span>
+        </label>
+        <label>
+          <input type="radio" name="horse" value="Emerald" />
+          <span class="horse-btn" data-horse="Emerald">Emerald</span>
+        </label>
+        <label>
+          <input type="radio" name="horse" value="Shadow" />
+          <span class="horse-btn" data-horse="Shadow">Shadow</span>
+        </label>
+      </div>
+
+      <div id="bet-amount-group">
+        <label for="bet-amount">베팅 금액</label>
+        <input type="number" id="bet-amount" min="10" value="10" placeholder="10" />
+      </div>
+
+      <button id="start-btn" type="button">출발</button>
+      <p id="bet-hint" hidden></p>
+
+    </div>
+  </footer>
+
+  <div id="result-modal" hidden>
+    <p id="result-message"></p>
+    <button id="next-race-btn" type="button">다음 경주</button>
+  </div>
+
+  <div id="game-over-modal" hidden>
+    <p id="game-over-message"></p>
+    <button id="restart-btn" type="button">다시 시작</button>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

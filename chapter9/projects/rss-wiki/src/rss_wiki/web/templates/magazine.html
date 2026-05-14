@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — RSS Wiki{% endblock %}
+{% block content %}
+<article class="magazine-body">
+    {{ magazine_html | safe }}
+</article>
+{% endblock %}
