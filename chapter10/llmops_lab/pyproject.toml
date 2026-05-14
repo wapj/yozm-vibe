@@ -1,0 +1,19 @@
+[project]
+name = "llmops-lab"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi>=0.136.1",
+    "jinja2>=3.1.6",
+    "langfuse>=4.6.1",
+    "python-multipart>=0.0.26",
+    "uvicorn>=0.46.0",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: 외부 호출이 필요한 통합 테스트 (실제 claude/Langfuse 사용)",
+]

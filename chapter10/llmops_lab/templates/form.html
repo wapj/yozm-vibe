@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>고객 문의 답변 도우미</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #222;
+            line-height: 1.5;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        input, textarea, select {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        button {
+            padding: 0.7rem 1.2rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .hint {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>고객 문의 답변 도우미</h1>
+    <p class="description">
+        문의 티켓을 입력하고 실행하면 클로드 코드가 답변을 만들고,
+        Langfuse에 trace와 score가 함께 기록됩니다.
+    </p>
+
+    <form method="post" action="/run">
+        <div class="row">
+            <label>
+                티켓 ID
+                <input name="ticket_id" value="ticket_001" required>
+            </label>
+            <label>
+                고객 ID
+                <input name="customer_id" value="cust_001" required>
+            </label>
+        </div>
+
+        <label>
+            제목
+            <input name="subject" value="연간 구독 환불 문의" required>
+        </label>
+
+        <div class="row">
+            <label>
+                제품
+                <input name="product" value="LangOps Pro" required>
+            </label>
+            <label>
+                우선순위
+                <select name="priority">
+                    <option value="low">low</option>
+                    <option value="normal" selected>normal</option>
+                    <option value="high">high</option>
+                </select>
+            </label>
+        </div>
+
+        <label>
+            필수 키워드
+            <span class="hint">쉼표로 구분해서 입력하세요</span>
+            <input name="required_keywords" value="환불, 결제일, 영업일, 영수증">
+        </label>
+
+        <label>
+            고객 문의
+            <textarea name="message" required>지난주에 연간 구독을 결제했는데 이미 다른 도구를 쓰기로 결정했습니다. 환불이 가능한지, 처리 기간이 얼마나 걸리는지 알고 싶습니다.</textarea>
+        </label>
+
+        <button type="submit">실행하고 기록하기</button>
+    </form>
+</body>
+</html>
