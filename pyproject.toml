@@ -19,5 +19,5 @@ members = [
     "projects/ch08-ai-board",
     "projects/ch09-shorts-factory",
     "chapter8/rss-wiki",
-    "chapter8/rss-wiki/docs",
+    "chapter10/llmops_lab",
 ]
