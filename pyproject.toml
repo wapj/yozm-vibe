@@ -20,4 +20,5 @@ members = [
     "projects/ch09-shorts-factory",
     "chapter8/rss-wiki",
     "chapter10/llmops_lab",
+    "chapter2/todo-cli",
 ]

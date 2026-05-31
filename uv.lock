@@ -8,6 +8,7 @@ members = [
     "ch07-nanobanana",
     "llmops-lab",
     "rss-wiki",
+    "todo-cli",
     "yozm-vibe-antigravity",
 ]
 
@@ -1273,6 +1274,17 @@ sdist = { url = "https://files.pythonhosted.org/packages/5c/5d/76b4383ac4e5b5e25
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/90/39a85a4b63c84213e78b3c17d22e1bf45328acf8ebb33ef93be30d0a3911/tld-0.13.2-py2.py3-none-any.whl", hash = "sha256:9b8fdbdb880e7ba65b216a4937f2c94c49a7226723783d5838fc958ac76f4e0c", size = 296743, upload-time = "2026-03-06T23:50:32.465Z" },
 ]
+
+[[package]]
+name = "todo-cli"
+version = "0.1.0"
+source = { virtual = "chapter2/todo-cli" }
+dependencies = [
+    { name = "typer" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "typer", specifier = ">=0.21.1" }]
 
 [[package]]
 name = "trafilatura"
