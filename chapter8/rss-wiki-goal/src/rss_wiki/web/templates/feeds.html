@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}피드 관리 — RSS Wiki{% endblock %}
+{% block content %}
+<h1 class="page-title">피드 관리</h1>
+
+<div class="card">
+  <form method="post" action="/feeds/add" style="display:flex;gap:.5rem;">
+    <input type="url" name="url" placeholder="https://example.com/feed.xml" required style="flex:1;">
+    <button class="btn btn-primary" type="submit">추가</button>
+  </form>
+</div>
+
+{% if feeds %}
+<div class="card" style="padding:0;">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>제목</th>
+        <th>상태</th>
+        <th>마지막 수집</th>
+        <th>동작</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for f in feeds %}
+    <tr>
+      <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+        <a href="{{ f.url }}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">{{ f.url }}</a>
+      </td>
+      <td>{{ f.title or '—' }}</td>
+      <td>
+        {% if f.is_active %}
+          <span class="tag tag-green">활성</span>
+        {% else %}
+          <span class="tag tag-red">비활성</span>
+        {% endif %}
+      </td>
+      <td style="font-size:.8rem;color:var(--text-sub);">{{ f.last_fetched_at[:16] if f.last_fetched_at else '—' }}</td>
+      <td>
+        <div class="actions">
+          <form method="post" action="/feeds/{{ f.id }}/toggle">
+            <button class="btn btn-ghost btn-sm" type="submit">
+              {{ '비활성화' if f.is_active else '활성화' }}
+            </button>
+          </form>
+          <form method="post" action="/feeds/{{ f.id }}/delete">
+            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>등록된 피드가 없습니다.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+[project]
+name = "rss-wiki"
+version = "0.1.0"
+description = "RSS 피드 수집·LLM 요약·주제별 위키 자동 생성 도구"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "jinja2>=3.1.0",
+    "feedparser>=6.0.0",
+    "trafilatura>=1.12.0",
+    "apscheduler>=3.10.0",
+    "python-multipart>=0.0.32",
+    "markdown>=3.10.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rss_wiki"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+]

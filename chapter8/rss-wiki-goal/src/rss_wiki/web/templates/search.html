@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}검색 — RSS Wiki{% endblock %}
+{% block content %}
+<h1 class="page-title">검색</h1>
+
+<div class="card">
+  <form method="get" action="/search" style="display:flex;gap:.5rem;">
+    <input type="text" name="q" value="{{ q }}" placeholder="키워드를 입력하세요" required style="flex:1;">
+    <button class="btn btn-primary" type="submit">검색</button>
+  </form>
+</div>
+
+{% if q %}
+  <div style="margin-bottom:.75rem;color:var(--text-sub);font-size:.9rem;">
+    「{{ q }}」 검색 결과 — {{ results | length }}건
+  </div>
+  {% if results %}
+  <div class="card" style="padding:0 1.5rem;">
+    <div class="search-results">
+    {% for r in results %}
+      <div class="search-item">
+        <div class="article-title">
+          <a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.title }}</a>
+        </div>
+        {% if r.published_at %}
+        <div class="article-meta">{{ r.published_at[:10] if r.published_at|length >= 10 else r.published_at }}</div>
+        {% endif %}
+        {% if r.llm_summary %}
+        <div class="article-summary">{{ r.llm_summary[:200] }}{% if r.llm_summary|length > 200 %}…{% endif %}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state"><p>검색 결과가 없습니다.</p></div>
+  {% endif %}
+{% endif %}
+{% endblock %}

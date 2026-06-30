@@ -21,4 +21,5 @@ members = [
     "chapter8/rss-wiki",
     "chapter10/llmops_lab",
     "chapter2/todo-cli",
+    "chapter4/quote-cli",
 ]

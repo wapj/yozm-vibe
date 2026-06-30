@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# venv
+.venv/
+venv/
+
+# uv
+# uv.lock is committed
+
+# runtime data
+data/rss-wiki.db
+data/rss-wiki.db-journal
+data/rss-wiki.db-wal
+data/rss-wiki.db-shm
+data/logs/*.log
+
+# IDE
+.idea/
+.vscode/
+.DS_Store

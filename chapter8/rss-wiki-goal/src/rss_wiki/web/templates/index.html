@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}RSS Wiki{% endblock %}
+{% block content %}
+<h1 class="page-title">주제 목록</h1>
+{% if categories %}
+<div class="category-grid">
+{% for c in categories %}
+  <a href="/categories/{{ c.id }}" class="category-card{% if c.has_unread_updates %} has-unread{% endif %}">
+    <div class="category-card-name">
+      {{ c.name }}
+      {% if c.has_unread_updates %}<span class="badge-unread">NEW</span>{% endif %}
+    </div>
+  </a>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>수집된 카테고리가 없습니다.</p>
+  <p>피드를 추가하고 수집을 실행하세요.</p>
+</div>
+{% endif %}
+{% endblock %}

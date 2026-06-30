@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}작업 로그 — RSS Wiki{% endblock %}
+{% block content %}
+<h1 class="page-title">작업 로그 <span style="font-size:1rem;color:var(--text-sub);font-weight:400;">최근 200건</span></h1>
+
+{% if logs %}
+<div class="card" style="padding:0;">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>유형</th>
+        <th>대상</th>
+        <th>상태</th>
+        <th>오류</th>
+        <th>시작</th>
+        <th>종료</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for log in logs %}
+    <tr>
+      <td><span class="tag">{{ log.job_type }}</span></td>
+      <td style="font-size:.8rem;color:var(--text-sub);">{{ log.target_ref or '—' }}</td>
+      <td>
+        {% if log.status == 'ok' %}
+          <span class="tag tag-green">ok</span>
+        {% else %}
+          <span class="tag tag-red">{{ log.status }}</span>
+        {% endif %}
+      </td>
+      <td style="font-size:.8rem;color:#b91c1c;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+        {{ log.error_message or '—' }}
+      </td>
+      <td style="font-size:.8rem;color:var(--text-sub);">{{ log.started_at[:16] if log.started_at else '—' }}</td>
+      <td style="font-size:.8rem;color:var(--text-sub);">{{ log.finished_at[:16] if log.finished_at else '—' }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>작업 로그가 없습니다.</p></div>
+{% endif %}
+{% endblock %}

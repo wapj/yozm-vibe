@@ -13,5 +13,20 @@
     "id": 3,
     "task": "운동가기",
     "status": "todo"
+  },
+  {
+    "id": 4,
+    "task": "테스트",
+    "status": "todo"
+  },
+  {
+    "id": 5,
+    "task": "chapter2 예제 만들기",
+    "status": "todo"
+  },
+  {
+    "id": 6,
+    "task": "운동가기",
+    "status": "todo"
   }
 ]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "task": "우유 사기",
+    "status": "done"
+  },
+  {
+    "id": 2,
+    "task": "운동하기",
+    "status": "doing"
+  }
+]

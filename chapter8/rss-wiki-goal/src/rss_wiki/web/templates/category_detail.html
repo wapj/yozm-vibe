@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} — RSS Wiki{% endblock %}
+{% block content %}
+<h1 class="page-title">
+  {{ category.name }}
+  {% if wiki_page and wiki_page.has_unread_updates %}<span class="badge-unread">NEW</span>{% endif %}
+</h1>
+
+{% if children %}
+<div style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+  {% for child in children %}
+    <a href="/categories/{{ child.id }}" class="tag">{{ child.name }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if wiki_page and wiki_page.content_markdown %}
+<div class="card wiki-content">
+  {{ wiki_page.content_markdown | markdown }}
+</div>
+{% endif %}
+
+<h2 class="section-title">원문 목록 ({{ articles | length }}건)</h2>
+{% if articles %}
+<div class="card" style="padding:0 1.5rem;">
+  <ul class="article-list">
+  {% for a in articles %}
+    <li class="article-item">
+      <div class="article-title">
+        <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.title }}</a>
+      </div>
+      {% if a.published_at %}
+      <div class="article-meta">{{ a.published_at[:10] if a.published_at|length >= 10 else a.published_at }}</div>
+      {% endif %}
+      {% if a.llm_summary %}
+      <div class="article-summary">{{ a.llm_summary[:160] }}{% if a.llm_summary|length > 160 %}…{% endif %}</div>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="empty-state"><p>아직 수집된 글이 없습니다.</p></div>
+{% endif %}
+{% endblock %}

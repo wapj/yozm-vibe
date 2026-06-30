@@ -1,0 +1,14 @@
+[project]
+name = "todo"
+version = "0.1.0"
+description = "todos.json에 저장하는 할일 관리 CLI"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "typer>=0.21.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
