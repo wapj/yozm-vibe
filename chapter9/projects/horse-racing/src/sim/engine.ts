@@ -14,14 +14,14 @@ import {
 
 export { TRACK_LENGTH };
 
-/** speed 스탯 1당 초당 진행 거리(임의 단위). */
-const SPEED_SCALE = 0.55;
+/** speed 스탯 1당 초당 진행 거리(임의 단위). 완주 시간 약 8~15초(PRD 4.5)에 맞춘 값. */
+const SPEED_SCALE = 1.1;
 /** 이 진행률(progress) 이전에는 stamina 영향이 없다. */
 const STAMINA_FADE_START = 0.6;
 /** stamina가 0에 수렴하는 말이 후반 구간에서 감속되는 최대 비율. */
 const MAX_STAMINA_FADE = 0.5;
-/** burst 구간 변동의 주기(초). 짧을수록 페이스 변화가 잦아 순위 다툼이 빈번해진다. */
-const BURST_PERIOD = 3.2;
+/** burst 구간 변동의 주기(초). SPEED_SCALE과 함께 조정해 경주당 요동 사이클 수(거리 기준 밀도)를 유지한다. */
+const BURST_PERIOD = 1.6;
 /** burst 스탯 100 기준 가속 변동 진폭. 사인파라 평균 속도(기대값)에는 영향이 없고 요동 폭만 커진다. */
 const BURST_AMPLITUDE = 0.24;
 

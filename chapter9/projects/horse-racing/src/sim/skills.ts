@@ -16,42 +16,50 @@ interface SkillConfig {
   staminaImmune?: boolean;
 }
 
+/**
+ * duration은 경주 속도(엔진 SPEED_SCALE)와 연동된 값이다. 완주 시간이 약 8~15초로
+ * 압축된 밸런스에서 각 스킬이 경주 거리의 동일한 비중을 차지하도록 맞춰져 있다.
+ */
 const SKILL_CONFIG: { [key: string]: SkillConfig | undefined } = {
   "last-spurt": {
-    duration: 4,
+    duration: 2,
     eligible: (progress) => progress >= 0.75,
     selfMultiplier: 2.4,
   },
   slipstream: {
-    duration: 6,
+    duration: 3,
     eligible: (_progress, gapAhead) => gapAhead !== null && gapAhead <= 40,
     selfMultiplier: 1.6,
   },
   "start-dash": {
-    duration: 2,
+    duration: 1,
     eligible: (progress) => progress <= 0.15,
     selfMultiplier: 2.2,
   },
   "shake-off": {
-    duration: 3,
+    duration: 1.5,
     eligible: (progress) => progress >= 0.2 && progress <= 0.9,
     selfMultiplier: 1,
     othersMultiplier: 0.55,
   },
   zone: {
-    duration: 6,
+    duration: 3,
     eligible: (progress) => progress >= 0.5,
     selfMultiplier: 1.4,
     staminaImmune: true,
   },
 };
 
+/**
+ * 해저드율(초당)은 경주 속도와 연동된 값이다. 완주 시간이 절반으로 압축된 밸런스에서
+ * 경주 1회당 발동 기대 횟수가 보존되도록 종전 대비 2배로 맞춰져 있다.
+ */
 /** 발동 확률(초당 해저드율)의 기본값. luck·순위 보정이 없어도 존재하는 최소 확률. */
-const BASE_ACTIVATION_HAZARD = 0.01;
+const BASE_ACTIVATION_HAZARD = 0.02;
 /** luck 1당 초당 해저드율 증가분. */
-const LUCK_HAZARD_WEIGHT = 0.0003;
+const LUCK_HAZARD_WEIGHT = 0.0006;
 /** 최하위(상대 순위 1.0) 보정 시 초당 해저드율 증가분. 하위권일수록 역전 가능성을 높인다(PRD 4.2). */
-const RANK_HAZARD_WEIGHT = 0.5;
+const RANK_HAZARD_WEIGHT = 1.0;
 
 /**
  * luck·현재 순위 기반 초당 해저드율을 dt 동안의 발동 확률로 변환한다.

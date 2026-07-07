@@ -57,9 +57,9 @@ select {
   padding: var(--space-3);
 }
 
-/* 앱 루트 */
+/* 앱 루트: 경주 캔버스(1350px) + 좌우 패딩이 온전히 들어가는 폭 */
 .app {
-  max-width: 960px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: var(--space-4) var(--space-3) var(--space-5);
   display: flex;

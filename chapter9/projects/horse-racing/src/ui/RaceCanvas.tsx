@@ -26,7 +26,7 @@ import type {
 } from "../render/types";
 import type { RaceState, RankedRunner } from "../sim/types";
 
-const DEFAULT_DIMENSIONS: Dimensions = { width: 900, height: 460 };
+const DEFAULT_DIMENSIONS: Dimensions = { width: 1350, height: 690 };
 
 function createBrowserRaf(): RafSource {
   return {

@@ -63,13 +63,13 @@ describe("프레임레이트 독립성 (전체 완주 구간)", () => {
 });
 
 describe("완주 시간 범위", () => {
-  it("기본 카탈로그 스탯(회차 변동 미적용)으로 완주하면 PRD 4.5의 15~30초 범위에 든다", () => {
+  it("기본 카탈로그 스탯(회차 변동 미적용)으로 완주하면 PRD 4.5의 8~15초 범위에 든다", () => {
     const participants = catalogParticipants(5);
     const result = runRaceToCompletion(participants, createSeededRng(1));
 
     expect(result.finalState.finished).toBe(true);
-    expect(result.finishTime).toBeGreaterThanOrEqual(15);
-    expect(result.finishTime).toBeLessThanOrEqual(30);
+    expect(result.finishTime).toBeGreaterThanOrEqual(8);
+    expect(result.finishTime).toBeLessThanOrEqual(15);
   });
 
   it("여러 시드에서도 완주 시간이 범위를 벗어나지 않는다", () => {
@@ -77,8 +77,8 @@ describe("완주 시간 범위", () => {
       const participants = catalogParticipants(5);
       const result = runRaceToCompletion(participants, createSeededRng(seed * 31 + 7));
 
-      expect(result.finishTime).toBeGreaterThanOrEqual(15);
-      expect(result.finishTime).toBeLessThanOrEqual(30);
+      expect(result.finishTime).toBeGreaterThanOrEqual(8);
+      expect(result.finishTime).toBeLessThanOrEqual(15);
     }
   });
 });
@@ -86,7 +86,8 @@ describe("완주 시간 범위", () => {
 describe("역전 우승 빈도", () => {
   it("출발 초반 하위권 말이 우승하는 회차 비율이 PRD 9번 목표(대략 10~20%) 근방에 든다", () => {
     const RACE_COUNT = 200;
-    const SNAPSHOT_TIME = 2;
+    /** 출발 초반 순위 스냅샷 시각. 완주 시간(약 8~15초)의 초반 구간에 해당한다. */
+    const SNAPSHOT_TIME = 1;
     let reversalCount = 0;
 
     for (let seed = 1; seed <= RACE_COUNT; seed++) {
@@ -125,12 +126,15 @@ describe("zone·slipstream 엔진 위치 반영 (통합)", () => {
     const stats = { speed: 65, stamina: 55, burst: 40, luck: 95 };
     let verified = false;
 
+    // 완주 후에는 위치가 TRACK_LENGTH로 클램프되어 비교가 무의미하므로, 완주 전
+    // (zone eligible 구간인 진행률 50%를 지난 뒤) 시점까지만 구동해 위치를 비교한다.
+    const COMPARE_AT_SECONDS = 10;
     for (let seed = 1; seed <= 300 && !verified; seed++) {
       const withRng = createSeededRng(seed);
       const withState = driveFor(
         createRaceState([{ id: "x", stats, skillId: "zone" }], withRng),
         withRng,
-        25,
+        COMPARE_AT_SECONDS,
       );
       if (!withState.runners[0].skillActivated) continue;
 
@@ -138,7 +142,7 @@ describe("zone·slipstream 엔진 위치 반영 (통합)", () => {
       const withoutState = driveFor(
         createRaceState([{ id: "x", stats, skillId: "" }], withoutRng),
         withoutRng,
-        25,
+        COMPARE_AT_SECONDS,
       );
 
       expect(withState.runners[0].position).toBeGreaterThan(withoutState.runners[0].position);

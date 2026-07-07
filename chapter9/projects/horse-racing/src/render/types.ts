@@ -136,9 +136,9 @@ export const TRACK_BOTTOM_RATIO = 0.95;
 export const HORSE_BASE_LANE_HEIGHT = 34;
 /** 말 스케일 클램프 범위. 레인이 아주 넓거나 좁아도 말이 극단적으로 커지거나 작아지지 않게 한다. */
 export const HORSE_SCALE_MIN = 0.75;
-export const HORSE_SCALE_MAX = 1.5;
-/** 갤럽 사이클 각속도(라디안/초). 다리 스윙·몸통 바운스가 이 위상을 공유한다. */
-export const GALLOP_CYCLE_SPEED = 11;
+export const HORSE_SCALE_MAX = 2.25;
+/** 갤럽 사이클 각속도(라디안/초). 다리 스윙·몸통 바운스가 이 위상을 공유하며, 경주 체감 속도에 맞춰져 있다. */
+export const GALLOP_CYCLE_SPEED = 15;
 
 /** 접전(슬로모션) 구간에서 화면 전체에 적용하는 카메라 셰이크 진폭(px). */
 export const CAMERA_SHAKE_AMPLITUDE = 2.4;
