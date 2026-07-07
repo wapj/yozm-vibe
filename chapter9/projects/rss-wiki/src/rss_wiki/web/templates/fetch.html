@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}수집 실행 - rss-wiki{% endblock %}
+{% block content %}
+<h1>수집 실행</h1>
+<p class="fetch-intro">등록된 모든 피드에서 새 글을 수집하고 요약하여 위키를 갱신합니다.</p>
+
+<form id="fetch-trigger-form" class="fetch-trigger">
+  <button type="submit" id="fetch-trigger-button" class="button button-primary">수집 시작</button>
+</form>
+
+<section
+  id="fetch-progress"
+  class="fetch-progress state state-loading"
+  aria-live="polite"
+  data-status="loading"
+>
+  <div class="spinner" aria-hidden="true"></div>
+  <p>현재 상태를 불러오는 중입니다...</p>
+</section>
+
+<script src="/static/fetch.js"></script>
+{% endblock %}

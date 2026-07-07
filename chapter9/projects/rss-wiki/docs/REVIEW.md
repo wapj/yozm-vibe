@@ -1,98 +1,69 @@
-# REVIEW — T-019C
+# REVIEW: T30 — 접근성·반응형 통합 점검 마감 (M12 2단계·M12 마감)
 
-**평가 일시:** 2026-05-06T02:30:00Z  
-**평가 대상:** T-019C 컴포넌트 클래스 부착 + `GET /tags` 인덱스 + active GNB 강조 + 매거진 본문 스타일 — M8 마지막 슬라이스  
-**판정:** **PASS**
+평가 대상: IMPL.md가 보고한 T30 단일 항목. 대상이 화면(디자인 토큰·템플릿·정적
+자원)의 접근성(WCAG AA 대비)·반응형·화면 완성도 통합 점검이므로 **화면이 있는
+항목**으로 취급해 화면 완성도 축을 포함한 5개 축(총 15점)으로 채점한다. 이
+항목은 코드 변경이 아닌 정적 측정·판정을 주 산출물로 하며, 이로써 M12(디자인
+품질 마감)가 마감된다.
 
----
+직접 실행·검증 결과:
+- `uv run pytest -x` → 141 passed (기존과 동일, 코드 변경 없어 회귀 불변, IMPL 수치 정합).
+- `uv run rss-wiki --help` → 종료 코드 0, 서브커맨드 5개(add/remove/list/fetch/serve).
+- **WCAG AA 대비비 독립 재계산**: IMPL이 표로 제시한 라이트/다크 각 조합 중
+  경계값 9종(본문·muted·primary·error subtle·배지 running 등)을 WCAG 2.1 상대
+  휘도 공식(`srgb_to_linear`→`luminance`→`(L1+0.05)/(L2+0.05)`)으로 직접 재계산 →
+  IMPL 수치와 전부 소수 둘째 자리까지 일치, 전 조합이 AA(4.5:1) 이상. 가장 빡빡한
+  조합도 라이트 `fetch-report__failures` 5.94:1·다크 6.01:1로 AA를 여유 있게 충족.
+- **success/warning 측정 제외 근거 검증**: `--color-success`/`--color-warning`이
+  텍스트 색으로 소비되는 규칙이 `styles.css` 정의 라인 외에는 없음을 `grep`으로
+  확인(`web/` 전체에서 매칭 없음) → 측정 대상 제외 타당.
+- **640px 반응형 점검 재확인**: `styles.css`에 헤더 `flex-wrap`(`255`),
+  `.page` 패딩 축소(`259-261`), `.feed-form` 세로 전환(`428-432`),
+  `input[type="url"]` `min-width:0`(`434-436`), `.feed-list__item` 세로
+  전환(`438-441`), `.article-list` `flex-direction:column`(`265-272`),
+  `.site-nav ul` `flex-wrap`(`309-311`) 실재. IMPL의 겹침·넘침 부재 판정 정합.
+- **포커스 링 재점검**: `:focus-visible`(`styles.css:112-115`)이 특정 클래스에
+  스코프되지 않은 전역 규칙이라 내비·버튼·목록 링크·테마 토글·폼 입력 전체가 상속.
+- **fetch.js 판정 근거 검증**: `web/static/fetch.js` 148줄, 렌더 분기 4개
+  (`renderIdle`/`renderRunning`/`renderDone`/`renderError`)와 상태 전환 시
+  `removeAttribute("role")` 3곳(`18·26·55`), `renderError`만 `role="alert"`
+  부여(`85`), 버튼 `disabled` 토글, 폴링 `.catch()`(`119`) 실재 → 단순 상태
+  분기임을 확인, 도입 판정 근거와 정합.
 
-## 테스트 실행 결과
+## 평가 표
 
-### Acceptance 테스트 (7케이스)
-
-```
-uv run pytest tests/test_web_app.py::test_tags_index_empty \
-  tests/test_web_app.py::test_tags_index_with_entries \
-  tests/test_web_app.py::test_active_nav_marks_feeds_link_when_on_feeds_page \
-  tests/test_web_app.py::test_active_nav_marks_magazines_link_when_on_magazines_page \
-  tests/test_web_app.py::test_active_nav_marks_tags_link_when_on_tags_page \
-  tests/test_web_app.py::test_feeds_html_uses_btn_class \
-  tests/test_web_app.py::test_magazine_body_styles_in_css -v
-
-7 passed in 0.26s
-```
-
-### 전체 회귀 테스트
-
-```
-uv run pytest -x tests/
-218 passed in 1.46s
-```
-
-기존 211 케이스 회귀 0, 신규 7 케이스 PASS → **218/218 PASS**
-
----
-
-## 4축 평가
-
-### 1. 사양 충족 — 3/3
-
-| 항목 | 위치 | 결과 |
+| 축 | 점수 | 근거 |
 |---|---|---|
-| `GET /tags` 라우트 신설 | `routes_magazines.py:140-150` | ✅ |
-| `routes_magazines.py` 7 GET 라우트 `active_nav` 주입 | L36, L47, L73, L114, L135, L149, L174 | ✅ |
-| `routes_feeds.py` 3 GET 라우트 `active_nav="feeds"` | `routes_feeds.py:22, 29, 43` | ✅ |
-| `.magazine-body` CSS (H1~H4, p, a, code, pre, blockquote) | `style.css:308-360+` | ✅ |
-| `list.html` `.card` 래퍼 | `list.html:7-10` | ✅ |
-| `magazine.html` `<article class="magazine-body">` | `magazine.html:4` | ✅ |
-| `feeds.html` `.btn`/`.badge-success`/`.badge-danger`/`.btn-danger` | `feeds.html:14, 28, 32, 34, 37, 40` | ✅ |
+| 사양 충족 | 3 | acceptance 4개 전부 충족 + 독립 검증. (1) WCAG AA 대비 측정 결과가 라이트/다크 각 9종 조합으로 IMPL에 표 기록, 평가자가 상대 휘도 공식으로 재계산해 전 수치 일치·전 조합 AA PASS 확인(미달 조합 없어 토큰 조정 불필요가 타당). (2) 640px 반응형 점검 결과가 `styles.css` 실제 미디어쿼리(`254·428`)·레이아웃 규칙과 정합, 겹침·넘침 부재. (3) `fetch.js` 렌더 분기 자동 검증 도입 판정 명시(도입하지 않음 + 수동 후속 근거 상세). (4) `uv run pytest -x` 141 passed·`--help` 종료 코드 0. 측정 항목을 평가자가 직접 재현해 통과-위장 여지 없음. |
+| 모듈 경계 | 3 | 이번 사이클 코드 변경 없음(산출물은 IMPL 측정 기록·TASKS 체크뿐). `styles.css`·`app.py`·`fetch.js`·코어 모듈(`feeds.py`·`store.py`·`wiki.py`·`pipeline.py`) 전부 미변경. `git status`에서 `docs/` 문서만 변경, `src/`·`tests/` 무변경 확인. touch 범위(조정 필요 시 `styles.css`·`tests/`)를 벗어난 변경이 없어 경계 위반 불가능. 재사용 원칙 준수. |
+| 테스트 충실도 | 2 | 이번 사이클 신규 자동 회귀 0건. 항목 본질이 정적 측정·판정이라 부당한 누락은 아니나, 화면 완성도 축을 가진 항목의 실질 공백은 존재한다 — (a) WCAG 대비는 정적 스크립트로 계산했을 뿐 저장소에 회귀로 남지 않아 토큰 값 회귀(예: 향후 색상 변경 시 AA 미달) 방어가 없고, (b) `fetch.js` 4개 렌더 분기(상태 전환·버튼 `disabled`·`role` 부재·폴링 재시도)가 M11부터 지속 자동 검증 밖이다. 도입하지 않는다는 판정 자체는 근거가 충실(단일 툴체인·비용 대비)하나, 문자열 패턴 단언 기각으로 남은 공백을 수동 후속에만 의존하는 점을 화면 항목 기준으로 감점. 실패 경로·로그 검증은 이 항목 범위 밖이라 추가 감점 아님. |
+| 운영 고려 | 3 | `fetch.js` 자동 검증을 위해 JS 테스트 스택(jsdom/vitest)·헤드리스 브라우저를 신규 도입하지 않기로 한 판정이 PRD 8 스택(Python/uv 단일 툴체인) 유지·비용 대비 효용 관점에서 타당. 새 의존성·색상값·임의 크기 도입 없음. 수동 후속 승계 항목(브라우저 종단 육안·실환경 `claude` 종단 실호출·`fetch.js` 렌더 분기 육안)을 구체 절차(트리거 클릭 시 버튼 비활성·완료 리포트 표시·`role="alert"` 소멸·폴링 차단 후 재개 육안 확인)와 함께 명시해 인수인계 가능. WCAG 통합 측정으로 접근성 운영 품질을 문서화. |
+| 화면 완성도 | 3 | 라이트·다크 전 텍스트/배경 조합이 AA(4.5:1)를 최소 5.9배 여유로 충족(평가자 재계산 확인)해 색 대비 일관성 확보. 640px 이하에서 헤더·피드 폼/목록·글 목록·본문·수집 진행이 세로 전환·`flex-wrap`·`max-width` 상한으로 겹침·넘침 없이 재배치. `:focus-visible` 전역 규칙으로 인터랙티브 요소 전체가 포커스 링을 일관 상속해 키보드 주요 동작 발견 가능. 여백·타이포·색이 디자인 토큰(`--space-*`·`--font-size-*`·`--color-*`)으로만 통제되어 전 화면 일관. 대기·진행·완료·오류 상태 시각 구분(`state-*`·`fetch-*`) 유지. 통합 점검에서 추가 조정이 필요한 갭이 발견되지 않음이 검증됨. |
 
-PRD §13의 4 미반영 요구(컴포넌트 클래스 통일, 본문 스타일, active 강조, GNB "태그" 메뉴 활성화) 전항 충족.
+## 합격 여부
 
-### 2. 모듈 경계 — 3/3
+**합계 14/15 → PASS** (화면 있는 항목 기준 12점 이상). 사양 충족·모듈 경계·운영
+고려·화면 완성도 각 3점, 테스트 충실도 2점. 합격 여부와 합계가 일치한다.
 
-- `GET /tags` 라우트를 `routes_magazines.py`에 배치: `/tags/{name}`과 동일 모듈, 자체 결정 일치 ✅
-- `repo.list_tags`, `_tag_items` 기존 함수 재사용, 신규 repo 함수 미추가 ✅
-- 신규 외부 의존성 미추가 (`pyproject.toml` 변경 없음) ✅
-- 변경 금지 파일(schema.sql, db.py, ingest/*, llm/*, publish/*, pipeline/*) 미수정 ✅
+`docs/decisions/` 디렉터리가 없으므로 절차 5(합의 주제 독립 선택 기록)는 해당
+없음. 모호 기준 판단: 코드 변경 없는 측정·판정 항목의 테스트 충실도는 "이번
+산출물(측정 결과·판정)이 저장소 회귀로 고정되는가"를 기준으로 채점했다 — 새
+테스트가 0건이고 화면 로직(`fetch.js`) 자동 검증 공백이 지속되나, 도입하지 않는
+판정이 근거와 함께 명시 승계되어 은폐가 아닌 알려진 공백이므로 조건부가 아닌
+PASS로 판정한다.
 
-### 3. 테스트 충실도 — 3/3
+## 다음 사이클로 넘기는 메모 (비차단, M12 마감 후 수동 후속)
 
-- 7/7 acceptance 케이스 PASS, TASKS.md 명세와 완전 일치 ✅
-- `test_tags_index_with_entries` (`test_web_app.py:684-702`): href 2건 + `class="card"` 마커 동시 검증으로 라우트·헬퍼·템플릿 연계 확인 ✅
-- active_nav 3축(feeds/magazines/tags) 균형 검증, HTML 속성 형식 `href="{x}" class="active"` 정확 검증 ✅
-- 218/218 전체 PASS (기존 211 회귀 0) ✅
-
-### 4. 운영 고려 — 3/3
-
-- `.magazine-body` 스코프 CSS로 GNB/카드 링크 스타일 격리 (`style.css:308`): GNB `<a>` 밑줄 없는 디자인 보호 ✅
-- `pre code` 중첩 이중 박스 회피: `padding: 0; background: none; border: none;` (`style.css:349-353`) ✅
-- POST 라우트 `active_nav` 미주입(redirect만 반환, base.html 미렌더): 불필요한 컨텍스트 주입 없음 ✅
-- JS 없이 동작 (PRD §13 strict): 인라인 form `style="display:inline"` 유지, toggle/class 조작 없음 ✅
-- `active_nav` 4값 통일(`magazines`/`categories`/`tags`/`feeds`): `/` 랜딩 `"magazines"` 포함, 일관된 문자열 매핑 ✅
-
----
-
-## 종합
-
-| 축 | 점수 |
-|---|---|
-| 사양 충족 | 3 |
-| 모듈 경계 | 3 |
-| 테스트 충실도 | 3 |
-| 운영 고려 | 3 |
-| **합계** | **12/12** |
-
-**판정: PASS** (합계 12 ≥ 9)
-
----
-
-## 다음 사이클 메모
-
-T-019C PASS로 M8(웹 UI 모던화) 전 슬라이스(T-019A/B/C) 완료.
-
-**다음 사이클 Planner 권고:**
-
-1. PRD §1~13 전 섹션이 코드·문서·테스트에 반영되었는지 최종 점검 수행.
-2. T-019A·B·C 모두 PASS 확인 후 `docs/DONE` 빈 파일 발행으로 프로젝트 종료 신호 발행.
-3. M8 슬라이싱 기준 잔여 FAIL/조건부 PASS 항목 없음 — 추가 수정 불필요.
+1. **[테스트 충실도] `fetch.js` 렌더 분기 지속 무커버**: 4개 상태 분기·버튼
+   `disabled`·상태 전환 후 `role` 부재·폴링 재시도가 자동 검증 밖이다. T30이
+   "도입하지 않음"으로 판정하며 수동 후속으로 승계했으므로, 향후 JS 테스트
+   스택을 별도 태스크로 도입할 여지가 생기면 그때 이 분기들의 회귀를 함께 고정할 것.
+2. **[테스트 충실도] WCAG 토큰 회귀 부재**: 대비비는 1회 정적 측정으로만 기록되어,
+   향후 색상 토큰 변경 시 AA 미달을 잡는 자동 방어가 없다. 비용 대비 효용이 낮아
+   강제하지 않으나, 토큰 값을 파싱해 AA 임계를 단언하는 경량 회귀는 순수 Python으로
+   구현 가능하므로(외부 의존 불필요) 접근성 회귀가 우려되면 검토할 수 있다.
+3. **[승계 유지] 수동 후속 검증**: M8~M11 각 화면의 브라우저 종단 육안 확인(다크
+   토글·반응형·폼 리다이렉트·폴링 실시간 갱신), 실환경 `claude` CLI 종단
+   `fetch --limit 1 --concurrency 2` 실호출 회귀 기준선, `fetch.js` 렌더 분기 육안
+   확인은 블로킹 서버·라이브 외부 서비스 특성상 자동 acceptance 고정이 어려워
+   수동 후속으로 유지한다. IMPL (4)·(5)에 구체 절차가 명시됨.

@@ -1,0 +1,665 @@
+{
+  "processed": {
+    "https://news.hada.io/topic?id=31186": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-코드-청결도는-코딩-에이전트에-영향을-미치는가-통제된-최소쌍-연구.md",
+        "title": "코드 청결도는 코딩 에이전트에 영향을 미치는가? 통제된 최소쌍 연구",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31185": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-몇-분-만에-상처를-닫는-해파리-과학자들이-주목하는-치유-비밀.md",
+        "title": "몇 분 만에 상처를 닫는 해파리, 과학자들이 주목하는 치유 비밀",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31184": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-비강-스프레이로-뇌-노화-역전-가능성.md",
+        "title": "비강 스프레이로 뇌 노화 역전 가능성",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31183": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-homegames-8년간-만든-오픈소스-게임-플랫폼.md",
+        "title": "Homegames, 8년간 만든 오픈소스 게임 플랫폼",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31182": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-rust에서-wip-코드를-경고로-남기기.md",
+        "title": "Rust에서 WIP 코드를 경고로 남기기",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31181": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-coursera로-컴퓨터-과학-학위-마치기.md",
+        "title": "Coursera로 컴퓨터 과학 학위 마치기",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31180": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-show-gn-hyperdesk-hyper-v-rdp-세션들을-하나의-창에-임베딩하는-데스크톱-앱.md",
+        "title": "Show GN: HyperDesk - Hyper-V/RDP 세션들을 하나의 창에 임베딩하는 데스크톱 앱",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31179": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-starring-the-computer-화면-속-컴퓨터-출연-목록.md",
+        "title": "Starring the Computer: 화면 속 컴퓨터 출연 목록",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31178": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-show-gn-k-vote-cli-한국-선거-공개-데이터를-api-키-없이-한-명령으로-받는-cli.md",
+        "title": "Show GN: k-vote-cli : 한국 선거 공개 데이터를 API 키 없이 한 명령으로 받는 CLI",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31177": {
+      "processed_at": "2026-07-06T23:01:48.775847+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-show-gn-fable5는-비싸지고-로컬-gpu는-부족하다-llm-하나를-mac-amp-cuda로-나눠-돌리는-drift.md",
+        "title": "Show GN: Fable5는 비싸지고, 로컬 GPU는 부족하다: LLM 하나를 Mac &amp; CUDA로 나눠 돌리는 DRIFT",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-06",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31213": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-gradle이-jj를-쓰지-못한-사소한-이유.md",
+        "title": "Gradle이 jj를 쓰지 못한 사소한 이유",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31209": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-glm-5-2와-다가오는-ai-추론-마진-붕괴.md",
+        "title": "GLM 5.2와 다가오는 AI 추론 마진 붕괴",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31208": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-fable이-remarkable을-harry-potter의-tom-riddle-일기장으로-바꿈.md",
+        "title": "Fable이 reMarkable을 Harry Potter의 Tom Riddle 일기장으로 바꿈",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31207": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-ai-시대에-취미가-곧-비즈니스-기회가-되는-이유.md",
+        "title": "AI 시대에 취미가 곧 비즈니스 기회가 되는 이유",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31206": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-show-gn-파비콘을-만들어주는-간단한-zsh-커맨드.md",
+        "title": "Show GN: 파비콘을 만들어주는 간단한 zsh 커맨드",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31204": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-amazon-mechanical-turk-신규-고객-접수-중단-예정.md",
+        "title": "Amazon, Mechanical Turk 신규 고객 접수 중단 예정",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31203": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-저커버그-quot-ai-에이전트-기술이-기대보다-느리게-발전하고-있다-quot.md",
+        "title": "저커버그, &quot;AI 에이전트 기술이 기대보다 느리게 발전하고 있다&quot;",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31202": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-amd-ryzen-ai-halo-4000-약-600만원-ai-개발-키트.md",
+        "title": "AMD Ryzen AI Halo, $4000(약 600만원) AI 개발 키트",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31201": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-anthropic이-개발자-호감을-잃는-몇-가지-방법.md",
+        "title": "Anthropic이 개발자 호감을 잃는 몇 가지 방법",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31200": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-comaps-오픈소스-오프라인-지도.md",
+        "title": "CoMaps - 오픈소스 오프라인 지도",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31199": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-언어-모델-안의-글로벌-워크스페이스.md",
+        "title": "언어 모델 안의 글로벌 워크스페이스",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31198": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-nintendo-유럽서-배터리-교체형-제품-개정판-발표.md",
+        "title": "Nintendo, 유럽서 배터리 교체형 제품 개정판 발표",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31197": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-castro-podcasts-고객-지원으로-관계를-쌓으려던-시도가-빗나간-이유.md",
+        "title": "Castro Podcasts: 고객 지원으로 관계를 쌓으려던 시도가 빗나간 이유",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31196": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-영국-철도망-실시간-지도.md",
+        "title": "영국 철도망 실시간 지도",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31195": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-gpt-5-6-sol-ultra는-codex에-탑재될-것임.md",
+        "title": "GPT-5.6 Sol Ultra는 Codex에 탑재될 것임",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31194": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-오픈소스-애플리케이션의-구조와-설계-지식-공유.md",
+        "title": "오픈소스 애플리케이션의 구조와 설계 지식 공유",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31193": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-openwrt-one-오픈-하드웨어-라우터.md",
+        "title": "OpenWrt One – 오픈 하드웨어 라우터",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31192": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-xbox-재설정-조직-스튜디오-운영-모델-재편.md",
+        "title": "XBOX 재설정: 조직·스튜디오·운영 모델 재편",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31191": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-rocky-파이프라인-전체를-타입-검사해-실행-전에-깨지는-변경을-잡아내는-sql-변환-엔진.md",
+        "title": "Rocky - 파이프라인 전체를 타입 검사해 실행 전에 깨지는 변경을 잡아내는 SQL 변환 엔진",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31190": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-astryx-meta가-공개한-오픈소스-디자인-시스템.md",
+        "title": "Astryx - Meta가 공개한 오픈소스 디자인 시스템",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31189": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-jam-프로그래밍-언어.md",
+        "title": "Jam 프로그래밍 언어",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31188": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-컴퓨터를-위한-속도-제한.md",
+        "title": "컴퓨터를 위한 속도 제한",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31187": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-elm-0-19-2-빌드-속도-개선.md",
+        "title": "Elm 0.19.2, 빌드 속도 개선",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31176": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-의미가-보이는-프로젝트를-작성하기.md",
+        "title": "의미가 보이는 프로젝트를 작성하기",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31175": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-rayfish-iroh-기반-p2p-vpn.md",
+        "title": "Rayfish: Iroh 기반 P2P VPN",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31174": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-show-gn-jetendard-폰트-jetbrains-mono-nerd-font-pretendard.md",
+        "title": "Show GN: Jetendard 폰트 (JetBrains Mono Nerd Font + Pretendard)",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31173": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-많이-조회되지-않은-콘텐츠.md",
+        "title": "많이 조회되지 않은 콘텐츠",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31172": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-flipper-zero-개발의-미래.md",
+        "title": "Flipper Zero 개발의 미래",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31170": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-덜한-것이-더-낫다-대체로.md",
+        "title": "덜한 것이 더 낫다, 대체로",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31169": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-ai-시대-figma를-다시-생각하다.md",
+        "title": "AI 시대, Figma를 다시 생각하다",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31168": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-메모리-아끼면서-cross-entropy-loss-계산하기.md",
+        "title": "메모리 아끼면서 Cross Entropy Loss 계산하기",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31167": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-라이브-데이터를-공유-가능한-영상으로-자동-변환하는-방법.md",
+        "title": "라이브 데이터를 공유 가능한 영상으로 자동 변환하는 방법",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31166": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-figma는-다음에-무엇을-할-것인가.md",
+        "title": "Figma는 다음에 무엇을 할 것인가?",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31165": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-ai-코딩-시대의-개발자-역할-변화-코딩-실행자에서-맥락-검증-제품화-설계자로.md",
+        "title": "AI 코딩 시대의 개발자 역할 변화: 코딩 실행자에서 맥락·검증·제품화 설계자로",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31164": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-컴파일러와-언어-설계-입문-교재-2021.md",
+        "title": "컴파일러와 언어 설계 입문 교재 (2021)",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31163": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-shadcn-ui가-radix-대신-base-ui를-기본값으로-전환.md",
+        "title": "Shadcn/UI가 Radix 대신 Base UI를 기본값으로 전환",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31162": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-물리-게임-vs-디지털-게임이-아니라-소유권-문제다.md",
+        "title": "물리 게임 vs 디지털 게임이 아니라, 소유권 문제다",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31161": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-openprinter-수리-가능한-컴팩트-오픈-프린터.md",
+        "title": "OpenPrinter - 수리 가능한 컴팩트 오픈 프린터",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31160": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-eu-이사회가-신속-절차로-chat-control을-밀어붙임.md",
+        "title": "EU 이사회가 신속 절차로 Chat Control을 밀어붙임",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31159": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-06-dbtrail-모든-행-변경을-기억하고-되돌리기-가능한-mysql용-타임머신.md",
+        "title": "dbtrail - 모든 행 변경을 기억하고 되돌리기 가능한 MySQL용 타임머신",
+        "published": "2026-07-06",
+        "collected_date": "2026-07-07",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "CBMiYEFVX3lxTE8wbXN3aExCMFVmZWFDSkUyR3FBR1hzV2llZ3k4SVVVVFVZa2N6X0lEMGhsM0VDLW5hNUkxZnBKbTF4NW5GQ0JmUGItWDc5LVBWYlFPaWQ3T2c1WGdUd2NfaQ": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-광주일고-배재고-출전정지-재심-청구-길-열어줘-품어-안겠다-한겨레.md",
+        "title": "광주일고, 배재고 ‘출전정지’ 재심 청구 길 열어줘…“품어 안겠다” - 한겨레",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiW0FVX3lxTFBJbm51ekxsRFQwSTY4WEYwUl82ZVNlNnVIdGU2dTlfdE1HdllTS3lVYmMzMkNYOVo0SWhEcWRGZ3R5RjUtRnh4U2p0a3k3bEtYTHl4cHgyVHRNR1U": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-장윤기-사건-광주-광산경찰서장-등-6명-대기-발령-kbs-뉴스.md",
+        "title": "‘장윤기 사건’ 광주 광산경찰서장 등 6명 대기 발령 - KBS 뉴스",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTFA3ZnpreUpjNS1JZ2R1eTZHc29yR2RyQ3B5aFliZmIzR2VZc004anBEemZlQTFyMFgtcjF2c0l5QVhrZHBxZkhoeUt2eDZERWFhdnNOenFVOGJJUdIBX0FVX3lxTE1RZV9zM3p0bF9oWGRaWEJhcUZxWmhrNGpVVDR1SEMtVEpvRmdhOEhkYXAzRnJ2RFRIUjY4Y2VjdXRXSlpSOG9DclFncXNjLWlyaERsQ01yUEx0V2tyM3pN": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-광주-반도체-클러스터는-인재-남방한계선-을-돌파할-수-있을까-경향신문.md",
+        "title": "광주 반도체 클러스터는 ‘인재 남방한계선’을 돌파할 수 있을까 - 경향신문",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiW0FVX3lxTE9halBZbU91NDJaeDJZTnF4QVVkQXNFQU9fVmZXQ1FkQ1NfTXJRTWdFcW9tb2pqNGpFZ3N5Zm5CWmc2NnllVzRBSDhvMEVSREtLQjVIdG1feHEzLUk": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-이-대통령-오늘-나토-방산포럼-참석-방위산업-파트너십-2-0-제안-kbs-뉴스.md",
+        "title": "이 대통령, 오늘 ‘나토 방산포럼’ 참석…‘방위산업 파트너십 2.0’ 제안 - KBS 뉴스",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMid0FVX3lxTE5tZVJBR0N1UUJiSHNMVWcwTUZ2Wk5YSUl3LTh0S09xdzhKZ0RDbndmdW41bGhoVXFxTlN0TGVWQUttSDF6SzZCLV9RcWN5c0JRcl9zdHo3ZmpieHpRcGRFc0x0N09BUzFHSi1wU2ZUU2pISmk5WlBR0gFmQVVfeXFMTU1uUkY0MjNTdVEwU3RkdHhIYzhZQm1kOWJZVFlTXzRTbWV4UTdlM3ozRXRxS1lKbUZSVzY0RUlIZldheDBhLVUxMVFtRjFpQnE4dWZJYVltV1owM3dZMGs0cFFCQzNR": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-체포방해-대법-9일-선고-생중계-계엄-583일만-동아일보.md",
+        "title": "尹 ‘체포방해’ 대법 9일 선고 생중계…계엄 583일만 - 동아일보",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZ0FVX3lxTE82X29uT2NmNnNuRTFtY2g4c1NtQW1yU3VnTWZaV3ZQODJfbHRmSDVScHNwTDNLYVVFQlVrUHM3Y3ZsMUt0TUd5cXhJajk2Y185ZkE0TmI0VUhHajFob1JXQ1lvakw3anM": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-특검-계엄-정당화-메시지-김태효-구속영장-청구-연합뉴스tv.md",
+        "title": "특검, ’계엄 정당화 메시지’ 김태효 구속영장 청구 - 연합뉴스TV",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiigFBVV95cUxPUzlNSEVNMUMzWWI3ZXZ3VzlTMVFUdGNvN2ZXRkItVFpVcC1hTG1VQXJ3N3p3WncxV1F0djE0YUQxNFNlYWMxZ2w5c0lKdnItYklOd0t5cVJWM1lDNnRSZDZGVnZRbTI2MDBJbEZMMkJQcVVsU2xQYlVOdUZjbldycDNBbmY2a3MzZHfSAZ4BQVVfeXFMT01SZnE2dU9ZdTlxLTk2YThWd0FsbVVIUlJjZ2VlQ2xvS3VqYy1iNWw2UDdZNVBiRnBZNUIyUVA2SGpmdWZLZmJyck1wUW1IaGFPQ0NNQ1ZySmgyZU5MZGROdnczSlhhaXFBUE5qcXVRODVvRjczTWNpNDZHUHhxdXBlN0FOcXF0TFRTbUkzNGEtcjFYWFVYYjh2VDVELXc": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-오이-200원-방울토마토-1000원-광화문서-땡처리-장터-열린-까닭-조선비즈-chosunbiz.md",
+        "title": "오이 200원·방울토마토 1000원… 광화문서 ‘땡처리’ 장터 열린 까닭 - 조선비즈 - Chosunbiz",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMibEFVX3lxTE5KdVMxUE5EN1NMQmxLZHJEMVh3eU5UaWhkUU1OckRKdWZHbGstNHFNal90U2RteW9ZUVFRbXV3c3FjdUw4OG9oS2FYeEtUQXBodjQ4UXhSdmx5bk5PU1d2YjBkWXFqVkh3a3dGeg": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-내일부터-큰-장마-폭염-연거푸-200-퍼붓고-주말엔-34도-쩔쩔-한겨레.md",
+        "title": "내일부터 큰 장마-폭염 연거푸…200㎜ 퍼붓고, 주말엔 34도 쩔쩔 - 한겨레",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMid0FVX3lxTE5KUnRHYjQtQ0JRQ0pSc2RNVHFOSjZheU9Dd3BCNzQtSnJnbWtGMmc1WkduMGd3cmQ1TGJYd2ZndVNTd1hiZVM1UEpyOW91MEwtdzNiYTlCa3ZsZ004QURoSGN4QjR4Y3VnTHBNTnY2LW1oZV9aMFA40gFmQVVfeXFMTkEyLXVjWEdXQklPSXBRNnVvWEFLV0hlLXFnM0JkR2k0cU1RT0RhWFJCSkszVWhua3p4UG1ISDF5aTRBdWltVHhXVElIZ3V0bWhvZ2NabW1qRUY3QjlLR2gyTVJ6M2N3": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-맞받은-정청래-김민석-당대표-로망-말한게-자기정치-동아일보.md",
+        "title": "맞받은 정청래 “김민석, ‘당대표 로망’ 말한게 자기정치” - 동아일보",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidkFVX3lxTE40bS0wRnllQ0JZTEY5QnFteGQzOENGdzZqeTR2c3dDNTBYMllrTUVkVzVFMUpIVGxoQUpoc05BNk5nRWZiSHc2RDdXTTE2YWpzRjNUSFB2NzV2MW5JcWZsZWUtVmVoN0E2MlgxQlVfZkRNbGpKUkHSAWZBVV95cUxNYUd2QktwMG9SanZfOXRGQnFvbnplbkc0N3NMOUlJMzctNkg3c0R2RmM4d0tOOGJtSWhReWJlUzRPMWgyNDVMQWt2U3RKellBUW9SYmQwWHA5TGxMSnhmcHN0TExOTkE": {
+      "processed_at": "2026-07-07T12:35:02.915061+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-백사장에-수상오토바이-몰고온-40대-붙잡히자-커피-마시러-동아일보.md",
+        "title": "백사장에 수상오토바이 몰고온 40대…붙잡히자 “커피 마시러” - 동아일보",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-07",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    }
+  },
+  "failures": []
+}

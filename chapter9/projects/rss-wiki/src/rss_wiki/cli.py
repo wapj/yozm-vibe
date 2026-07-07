@@ -1,223 +1,156 @@
-from __future__ import annotations
+import asyncio
+import shutil
+from datetime import datetime, timezone
 
-import argparse
-import calendar
-import logging
-import sqlite3
-from collections.abc import Sequence
-from datetime import date
-from pathlib import Path
-from typing import Callable
+import typer
+import uvicorn
 
-from rss_wiki.config import FeedConfig
-from rss_wiki.llm.client import DEFAULT_TIMEOUT, call_claude
-from rss_wiki.storage.db import get_connection, init_db
-from rss_wiki.storage.repo import list_feeds, list_unanalyzed_article_ids
-from rss_wiki.pipeline.bootstrap import bootstrap_feeds_from_toml
-from rss_wiki.pipeline.ingest import run_daily_ingest
-from rss_wiki.pipeline.llm import analyze_articles
-from rss_wiki.pipeline.publish import publish_daily, publish_indexes, publish_weekly, publish_monthly
+from rss_wiki import feeds as feeds_logic
+from rss_wiki import pipeline
+from rss_wiki import store
+from rss_wiki import wiki
+from rss_wiki.web.app import create_app
+
+app = typer.Typer(
+    name="rss-wiki",
+    help="RSS 피드를 LLM으로 요약해 마크다운 위키로 정리하는 CLI 도구",
+    no_args_is_help=True,
+)
 
 
-def _default_uvicorn_run() -> Callable[..., None]:
+def _load_feeds_or_exit() -> list[dict]:
     try:
-        import uvicorn
-    except ModuleNotFoundError as exc:
-        raise RuntimeError(
-            "web command requires uvicorn. Install project dependencies with `pip install -e .` or `uv sync`."
-        ) from exc
-    return uvicorn.run
+        return store.load_feeds()
+    except store.StoreError as e:
+        typer.echo(f"오류: {e}", err=True)
+        raise typer.Exit(code=1)
 
 
-def _create_web_app(db_path: Path):
+def _load_state_or_exit() -> dict:
     try:
-        from rss_wiki.web.app import create_app
-    except ModuleNotFoundError as exc:
-        raise RuntimeError(
-            "web command requires FastAPI web dependencies. Install project dependencies with `pip install -e .` or `uv sync`."
-        ) from exc
-    return create_app(db_path)
+        return store.load_state()
+    except store.StoreError as e:
+        typer.echo(f"오류: {e}", err=True)
+        raise typer.Exit(code=1)
 
 
-def _positive_float(value: str) -> float:
-    parsed = float(value)
-    if parsed <= 0:
-        raise argparse.ArgumentTypeError("must be greater than 0")
-    return parsed
+@app.command()
+def add(url: str) -> None:
+    """피드를 등록합니다."""
+    current = _load_feeds_or_exit()
+
+    try:
+        updated = feeds_logic.add_feed(current, url)
+    except (feeds_logic.DuplicateFeedError, feeds_logic.FeedValidationError) as e:
+        typer.echo(f"오류: {e}", err=True)
+        raise typer.Exit(code=1)
+
+    store.save_feeds(updated)
+    added = updated[-1]
+    typer.echo(f"등록됨: {added['name']} ({added['url']})")
 
 
-def _add_llm_timeout_arg(
-    parser: argparse.ArgumentParser,
-    *,
-    default: float | str = argparse.SUPPRESS,
+@app.command()
+def remove(target: str) -> None:
+    """URL 또는 이름으로 피드를 삭제합니다."""
+    current = _load_feeds_or_exit()
+
+    try:
+        updated = feeds_logic.remove_feed(current, target)
+    except feeds_logic.FeedNotFoundError as e:
+        typer.echo(f"오류: {e}", err=True)
+        raise typer.Exit(code=1)
+
+    store.save_feeds(updated)
+    typer.echo(f"삭제됨: {target}")
+
+
+@app.command(name="list")
+def list_feeds() -> None:
+    """등록된 피드 목록을 출력합니다."""
+    current = _load_feeds_or_exit()
+    items = feeds_logic.list_feeds(current)
+
+    if not items:
+        typer.echo("등록된 피드가 없습니다.")
+        return
+
+    for feed in items:
+        typer.echo(f"- {feed['name']}  {feed['url']}  (등록: {feed['added_at']})")
+
+
+def _claude_available() -> bool:
+    return shutil.which("claude") is not None
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _echo_report(report: dict) -> None:
+    feeds_report = report["feeds"]
+    articles_report = report["articles"]
+    typer.echo(
+        f"피드: 성공 {feeds_report['succeeded']}건 / 실패 {feeds_report['failed']}건"
+    )
+    for failure in feeds_report["failures"]:
+        typer.echo(f"  - 피드 실패: {failure['feed']} ({failure['reason']})")
+    typer.echo(
+        f"글: 성공 {articles_report['succeeded']}건 / 실패 {articles_report['failed']}건"
+    )
+    for failure in articles_report["failures"]:
+        typer.echo(f"  - 글 실패: {failure['feed']} / {failure['article_id']} ({failure['reason']})")
+
+
+@app.command()
+def fetch(
+    limit: int = typer.Option(10, "--limit", help="최초 수집 시 가져올 글 개수"),
+    concurrency: int = typer.Option(4, "--concurrency", help="글 요약 동시 실행 개수"),
 ) -> None:
-    parser.add_argument(
-        "--llm-timeout",
-        type=_positive_float,
-        default=default,
-        help=f"Claude CLI 호출 타임아웃(초, 기본={DEFAULT_TIMEOUT:g})",
+    """전체 피드에서 새 글을 수집하고 위키를 갱신합니다."""
+    if not _claude_available():
+        typer.echo(
+            "오류: claude CLI를 찾을 수 없습니다. Claude Code CLI를 설치한 뒤 다시 시도하세요.",
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
+    current_feeds = _load_feeds_or_exit()
+    state = _load_state_or_exit()
+
+    now = _now_iso()
+    collected_date = now[:10]
+
+    result = asyncio.run(
+        pipeline.run_fetch_async(
+            current_feeds,
+            state,
+            limit=limit,
+            now=now,
+            collected_date=collected_date,
+            concurrency=concurrency,
+        )
     )
 
+    new_state = result["state"]
+    all_meta = [
+        record["meta"] for record in new_state.get("processed", {}).values() if "meta" in record
+    ]
+    wiki.write_wiki(result["batch"], all_meta=all_meta)
+    store.save_state(new_state)
 
-def is_friday(d: date) -> bool:
-    return d.weekday() == 4
+    _echo_report(result["report"])
 
-
-def is_last_friday_of_month(d: date) -> bool:
-    if d.weekday() != 4:
-        return False
-    last_day = calendar.monthrange(d.year, d.month)[1]
-    return d.day + 7 > last_day
-
-
-def run_daily(
-    *,
-    conn: sqlite3.Connection,
-    feeds: Sequence[FeedConfig],
-    output_dir: Path,
-    runner: Callable[[str], str] | None = None,
-    now: date | None = None,
-    logger: logging.Logger | None = None,
-) -> int:
-    _logger = logger or logging.getLogger(__name__)
-    _now = now or date.today()
-    _today_iso = _now.isoformat()
-
-    stats = run_daily_ingest(conn=conn, feeds=feeds, logger=_logger)
-    _logger.info("ingest stats: %s", stats)
-
-    article_ids = list_unanalyzed_article_ids(conn)
-    result = analyze_articles(conn=conn, article_ids=article_ids, runner=runner, logger=_logger)
-    _logger.info("analyze stats: %s", result.stats)
-
-    if result.analyzed_article_ids:
-        publish_daily(conn=conn, result=result, output_dir=output_dir, date=_today_iso, logger=_logger)
-    else:
-        _logger.warning("daily publish skipped (no analyzed articles)")
-
-    publish_indexes(conn=conn, output_dir=output_dir, logger=_logger)
-
-    if is_friday(_now):
-        publish_weekly(conn=conn, end_date=_today_iso, output_dir=output_dir, runner=runner, logger=_logger)
-
-    if is_last_friday_of_month(_now):
-        publish_monthly(conn=conn, end_date=_today_iso, output_dir=output_dir, runner=runner, logger=_logger)
-
-    conn.commit()
-    return 0
+    articles_succeeded = result["report"]["articles"]["succeeded"]
+    total_failed = result["report"]["feeds"]["failed"] + result["report"]["articles"]["failed"]
+    if total_failed > 0 and articles_succeeded == 0:
+        raise typer.Exit(code=1)
 
 
-def run_weekly(
-    *,
-    conn: sqlite3.Connection,
-    end_date: str,
-    output_dir: Path,
-    runner: Callable[[str], str] | None = None,
-    logger: logging.Logger | None = None,
-) -> int:
-    _logger = logger or logging.getLogger(__name__)
-    publish_weekly(conn=conn, end_date=end_date, output_dir=output_dir, runner=runner, logger=_logger)
-    conn.commit()
-    return 0
-
-
-def run_monthly(
-    *,
-    conn: sqlite3.Connection,
-    end_date: str,
-    output_dir: Path,
-    runner: Callable[[str], str] | None = None,
-    logger: logging.Logger | None = None,
-) -> int:
-    _logger = logger or logging.getLogger(__name__)
-    publish_monthly(conn=conn, end_date=end_date, output_dir=output_dir, runner=runner, logger=_logger)
-    conn.commit()
-    return 0
-
-
-def run_web(
-    *,
-    db_path: Path,
-    host: str,
-    port: int,
-    run_uvicorn: Callable[..., None] | None = None,
-    create_web_app: Callable[[Path], object] | None = None,
-    logger: logging.Logger | None = None,
-) -> int:
-    _logger = logger or logging.getLogger(__name__)
-    _logger.info("starting web server on %s:%d (db=%s)", host, port, db_path)
-    runner = run_uvicorn or _default_uvicorn_run()
-    app_factory = create_web_app or _create_web_app
-    runner(app_factory(db_path), host=host, port=port, log_level="info")
-    return 0
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="rss-wiki")
-    parser.add_argument("--db", default="data/rss-wiki.db", help="SQLite 경로")
-    parser.add_argument("--feeds", default="feeds.toml", help="피드 설정 파일")
-    parser.add_argument("--output", default="output", help="마크다운 출력 디렉터리")
-    _add_llm_timeout_arg(parser, default=DEFAULT_TIMEOUT)
-    sub = parser.add_subparsers(dest="cmd", required=True)
-    p_daily = sub.add_parser("daily", help="일간 파이프라인")
-    _add_llm_timeout_arg(p_daily)
-    p_weekly = sub.add_parser("weekly", help="주간 매거진(트리거 우회)")
-    p_weekly.add_argument("--end-date", default=None, help="ISO 날짜(기본=오늘)")
-    _add_llm_timeout_arg(p_weekly)
-    p_monthly = sub.add_parser("monthly", help="월간 매거진(트리거 우회)")
-    p_monthly.add_argument("--end-date", default=None, help="ISO 날짜(기본=오늘)")
-    _add_llm_timeout_arg(p_monthly)
-    p_web = sub.add_parser("web", help="로컬 웹 인터페이스 실행")
-    p_web.add_argument("--host", default="127.0.0.1", help="바인딩 호스트")
-    p_web.add_argument("--port", type=int, default=8765, help="바인딩 포트")
-    args = parser.parse_args(argv)
-
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-    )
-    logger = logging.getLogger("rss_wiki.cli")
-
-    db_path = Path(args.db)
-    if not db_path.parent.exists():
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-    init_db(db_path)
-    conn = get_connection(db_path)
-    try:
-        if args.cmd == "daily":
-            bootstrap_feeds_from_toml(conn, args.feeds)
-            rows = list_feeds(conn, enabled_only=True)
-            feeds = [FeedConfig(name=r["name"], url=r["url"]) for r in rows]
-            return run_daily(
-                conn=conn,
-                feeds=feeds,
-                output_dir=Path(args.output),
-                runner=lambda prompt: call_claude(prompt, timeout=args.llm_timeout),
-                logger=logger,
-            )
-        elif args.cmd == "weekly":
-            end_date = args.end_date or date.today().isoformat()
-            return run_weekly(
-                conn=conn,
-                end_date=end_date,
-                output_dir=Path(args.output),
-                runner=lambda prompt: call_claude(prompt, timeout=args.llm_timeout),
-                logger=logger,
-            )
-        elif args.cmd == "monthly":
-            end_date = args.end_date or date.today().isoformat()
-            return run_monthly(
-                conn=conn,
-                end_date=end_date,
-                output_dir=Path(args.output),
-                runner=lambda prompt: call_claude(prompt, timeout=args.llm_timeout),
-                logger=logger,
-            )
-        elif args.cmd == "web":
-            return run_web(db_path=db_path, host=args.host, port=args.port, logger=logger)
-        return 2  # 도달 불가(argparse required=True)
-    except (RuntimeError, ValueError) as exc:
-        logger.error("command failed: %s", exc)
-        return 1
-    finally:
-        conn.close()
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", help="바인딩할 호스트(로컬 전용)"),
+    port: int = typer.Option(8000, "--port", help="바인딩할 포트"),
+) -> None:
+    """로컬 웹 UI 서버를 실행합니다."""
+    uvicorn.run(create_app(), host=host, port=port)

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "GeekNews - 개발/기술/스타트업 뉴스 서비스",
+    "url": "https://news.hada.io/rss/news",
+    "added_at": "2026-07-06T23:01:00.883164+00:00"
+  },
+  {
+    "name": "주요 뉴스 - Google 뉴스",
+    "url": "https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",
+    "added_at": "2026-07-07T12:34:17.047690+00:00"
+  }
+]

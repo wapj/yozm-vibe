@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}rss-wiki{% endblock %}
+{% block content %}
+<h1>전체 글</h1>
+{% include "_article_list.html" %}
+
+<nav class="site-nav" aria-label="피드·날짜별 보기">
+  <h2>피드별 보기</h2>
+  <ul>
+    {% for group in by_feed %}
+    <li><a href="/feeds/{{ group.slug }}">{{ group.feed_name }}</a></li>
+    {% endfor %}
+  </ul>
+  <h2>날짜별 보기</h2>
+  <ul>
+    {% for group in by_date %}
+    <li><a href="/daily/{{ group.date }}">{{ group.date }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endblock %}

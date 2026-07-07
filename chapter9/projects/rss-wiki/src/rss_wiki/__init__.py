@@ -1,1 +1,5 @@
-__version__ = "0.1.0"
+from rss_wiki.cli import app
+
+
+def main() -> None:
+    app()

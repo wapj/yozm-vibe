@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ feed_name }} - rss-wiki{% endblock %}
+{% block content %}
+<h1>{{ feed_name }}</h1>
+{% include "_article_list.html" %}
+{% endblock %}

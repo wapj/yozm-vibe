@@ -1,7 +1,0 @@
-[[feed]]
-name = "Hacker News Front Page"
-url  = "https://hnrss.org/frontpage"
-
-[[feed]]
-name = "Python Insider"
-url  = "https://feeds.feedburner.com/PythonInsider"

@@ -1,748 +1,608 @@
-from __future__ import annotations
+import asyncio
+import html
+import json
+import time
 
-import sqlite3
-
-import pytest
 from fastapi.testclient import TestClient
 
-from rss_wiki.storage.db import init_db
-from rss_wiki.storage.repo import (
-    get_feed_by_id,
-    insert_article,
-    insert_magazine,
-    link_article_category,
-    list_feeds,
-    record_feed_failure,
-    set_feed_enabled,
-    upsert_category,
-    upsert_feed,
-    upsert_tag,
-)
+from rss_wiki import feeds as feeds_logic
+from rss_wiki import wiki
 from rss_wiki.web.app import create_app
-from rss_wiki.web.markdown import render_markdown
 
 
-def test_healthz_returns_ok(tmp_path):
-    client = TestClient(create_app(tmp_path / "x.db"))
-    response = client.get("/healthz")
+def _write_state(path, metas):
+    processed = {
+        str(i): {"processed_at": "2026-07-01T00:00:00+00:00", "status": "ok", "meta": meta}
+        for i, meta in enumerate(metas)
+    }
+    path.write_text(
+        json.dumps({"processed": processed, "failures": []}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def _meta(**overrides):
+    base = {
+        "filename": "2026-07-01-a.md",
+        "title": "글 A",
+        "published": "2026-07-01",
+        "collected_date": "2026-07-01",
+        "feed_name": "피드 A",
+    }
+    base.update(overrides)
+    return base
+
+
+def test_root_returns_200_html():
+    client = TestClient(create_app())
+
+    response = client.get("/")
+
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert response.headers["content-type"].startswith("text/html")
+    assert "rss-wiki" in response.text
 
 
-def test_index_returns_200(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.get("/")
+def test_static_design_tokens_css_is_served():
+    client = TestClient(create_app())
+
+    response = client.get("/static/styles.css")
+
     assert response.status_code == 200
-    assert "RSS Wiki" in response.text
+    assert response.headers["content-type"].startswith("text/css")
 
 
-def test_create_app_runs_init_db_and_enables_wal(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        client.get("/healthz")
-    assert tmp_db.exists()
-    conn = sqlite3.connect(tmp_db)
-    try:
-        result = conn.execute("PRAGMA journal_mode").fetchone()
-        assert result[0] == "wal"
-    finally:
-        conn.close()
+def test_static_theme_js_is_served_as_javascript():
+    client = TestClient(create_app())
 
+    response = client.get("/static/theme.js")
 
-def test_render_markdown_basic():
-    result = render_markdown("# Hello")
-    assert "<h1>" in result
-    assert "Hello" in result
-
-    result2 = render_markdown("[link](https://example.com)")
-    assert "<a" in result2
-    assert "https://example.com" in result2
-
-
-def test_magazines_list_empty(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.get("/magazines")
     assert response.status_code == 200
-    assert "매거진 인덱스" in response.text
-    assert "아직 항목이 없습니다" in response.text
+    assert "javascript" in response.headers["content-type"]
 
 
-def test_magazines_list_with_entries(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        insert_magazine(conn, kind="daily", published_at="2026-05-04", file_path="/tmp/dummy1.md")
-        insert_magazine(conn, kind="weekly", published_at="2026-05-03", file_path="/tmp/dummy2.md")
-        conn.commit()
-    finally:
-        conn.close()
+def test_dark_theme_selector_present_in_css_and_toggle_present_in_page():
+    client = TestClient(create_app())
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get("/magazines")
+    css_response = client.get("/static/styles.css")
+    page_response = client.get("/")
+
+    assert '[data-theme="dark"]' in css_response.text
+    assert 'id="theme-toggle"' in page_response.text
+
+
+def test_index_lists_articles_in_published_desc_order(tmp_path):
+    state_path = tmp_path / "state.json"
+    _write_state(
+        state_path,
+        [
+            _meta(filename="a.md", title="글A", published="2026-07-01"),
+            _meta(filename="b.md", title="글B", published="2026-07-03"),
+            _meta(filename="c.md", title="글C", published="2026-07-02"),
+        ],
+    )
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
+
+    response = client.get("/")
+
     assert response.status_code == 200
-    assert "2026-05-04" in response.text
-    assert "2026-05-03" in response.text
-    assert "daily" in response.text
-    assert "weekly" in response.text
+    body = response.text
+    assert body.index("글B") < body.index("글C") < body.index("글A")
 
 
-def test_magazine_detail_renders_markdown(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    md_path = tmp_path / "out.md"
-    md_path.write_text("# Hello\n\n본문 텍스트", encoding="utf-8")
+def test_feed_route_lists_only_matching_feed_articles(tmp_path):
+    state_path = tmp_path / "state.json"
+    _write_state(
+        state_path,
+        [
+            _meta(filename="a.md", title="A글", feed_name="피드 A"),
+            _meta(filename="b.md", title="B글", feed_name="피드 B"),
+        ],
+    )
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
 
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        mag_id = insert_magazine(conn, kind="daily", published_at="2026-05-05", file_path=str(md_path))
-        conn.commit()
-    finally:
-        conn.close()
+    response = client.get(f"/feeds/{wiki.slugify('피드 A')}")
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get(f"/magazines/{mag_id}")
     assert response.status_code == 200
-    assert "<h1>" in response.text
-    assert "Hello" in response.text
-    assert "본문 텍스트" in response.text
-    assert "daily 2026-05-05" in response.text
+    assert "A글" in response.text
+    assert "B글" not in response.text
 
 
-def test_magazine_detail_404_for_missing_id(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.get("/magazines/99999")
+def test_daily_route_lists_only_matching_date_articles(tmp_path):
+    state_path = tmp_path / "state.json"
+    _write_state(
+        state_path,
+        [
+            _meta(filename="a.md", title="A글", collected_date="2026-07-01"),
+            _meta(filename="b.md", title="B글", collected_date="2026-07-02"),
+        ],
+    )
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
+
+    response = client.get("/daily/2026-07-01")
+
+    assert response.status_code == 200
+    assert "A글" in response.text
+    assert "B글" not in response.text
+
+
+def test_article_route_renders_markdown_html_and_display_meta(tmp_path):
+    wiki_dir = tmp_path / "wiki"
+    articles_dir = wiki_dir / "articles"
+    articles_dir.mkdir(parents=True)
+    filename = "2026-07-01-a.md"
+    (articles_dir / filename).write_text(
+        "# 글 제목\n\n"
+        "- 포인트 1\n"
+        "- 포인트 2\n\n"
+        "원문: [링크](https://example.com/article)\n",
+        encoding="utf-8",
+    )
+    state_path = tmp_path / "state.json"
+    _write_state(
+        state_path,
+        [_meta(filename=filename, title="글 제목", published="2026-07-01", feed_name="피드 A")],
+    )
+    client = TestClient(create_app(state_path=state_path, wiki_dir=wiki_dir))
+
+    response = client.get(f"/articles/{filename}")
+
+    assert response.status_code == 200
+    assert "<h1>글 제목</h1>" in response.text
+    assert "<li>포인트 1</li>" in response.text
+    assert '<a href="https://example.com/article">링크</a>' in response.text
+    assert "2026-07-01" in response.text
+    assert "피드 A" in response.text
+
+
+def test_article_route_renders_clickable_link_for_legacy_plain_link_format(tmp_path):
+    wiki_dir = tmp_path / "wiki"
+    articles_dir = wiki_dir / "articles"
+    articles_dir.mkdir(parents=True)
+    filename = "2026-07-01-legacy.md"
+    (articles_dir / filename).write_text(
+        "# 구식 글\n\n"
+        "- 원문 링크: https://example.com/legacy-article\n"
+        "- 발행일: 2026-07-01\n"
+        "- 피드: 피드 A\n\n"
+        "요약 본문\n",
+        encoding="utf-8",
+    )
+    state_path = tmp_path / "state.json"
+    _write_state(
+        state_path,
+        [_meta(filename=filename, title="구식 글", published="2026-07-01", feed_name="피드 A")],
+    )
+    client = TestClient(create_app(state_path=state_path, wiki_dir=wiki_dir))
+
+    response = client.get(f"/articles/{filename}")
+
+    assert response.status_code == 200
+    assert '<a href="https://example.com/legacy-article">' in response.text
+
+
+def test_article_route_returns_404_for_missing_file(tmp_path):
+    client = TestClient(
+        create_app(state_path=tmp_path / "state.json", wiki_dir=tmp_path / "wiki")
+    )
+
+    response = client.get("/articles/nonexistent.md")
+
     assert response.status_code == 404
+    assert "Traceback" not in response.text
 
 
-def test_magazine_detail_404_when_file_missing(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        mag_id = insert_magazine(
-            conn, kind="daily", published_at="2026-05-05", file_path="/nonexistent/path.md"
-        )
-        conn.commit()
-    finally:
-        conn.close()
+def test_index_shows_empty_state_for_zero_articles(tmp_path):
+    state_path = tmp_path / "state.json"
+    _write_state(state_path, [])
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get(f"/magazines/{mag_id}")
-    assert response.status_code == 404
+    response = client.get("/")
 
-
-def test_categories_index_empty(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.get("/categories")
     assert response.status_code == 200
-    assert "카테고리" in response.text
-    assert "아직 항목이 없습니다" in response.text
+    assert "state-empty" in response.text
 
 
-def test_categories_index_with_entries(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        upsert_category(conn, "AI")
-        upsert_category(conn, "데이터")
-        conn.commit()
-    finally:
-        conn.close()
+def test_index_lists_article_missing_published_without_error(tmp_path):
+    state_path = tmp_path / "state.json"
+    meta = _meta(filename="a.md", title="발행일 없음")
+    del meta["published"]
+    _write_state(state_path, [meta])
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get("/categories")
+    response = client.get("/")
+
     assert response.status_code == 200
-    assert "ai" in response.text
-    assert "데이터" in response.text
-    assert 'href="/categories/ai"' in response.text
+    assert "발행일 없음" in response.text
 
 
-def test_category_articles_renders_articles(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, name="테스트피드", url="https://example.com/feed")
-        cat_id = upsert_category(conn, "AI")
-        art_id1 = insert_article(
-            conn,
-            feed_id=feed_id,
-            url="https://example.com/a1",
-            url_hash="h1",
-            title="글 제목 1",
-            title_hash="t1",
-            published_at="2026-05-01",
-            content=None,
-            summary=None,
-        )
-        art_id2 = insert_article(
-            conn,
-            feed_id=feed_id,
-            url="https://example.com/a2",
-            url_hash="h2",
-            title="글 제목 2",
-            title_hash="t2",
-            published_at="2026-05-02",
-            content=None,
-            summary=None,
-        )
-        link_article_category(conn, art_id1, cat_id)
-        link_article_category(conn, art_id2, cat_id)
-        conn.commit()
-    finally:
-        conn.close()
+def test_index_omits_trailing_separator_when_published_missing(tmp_path):
+    state_path = tmp_path / "state.json"
+    meta = _meta(filename="a.md", title="발행일 없음", feed_name="피드 A")
+    del meta["published"]
+    _write_state(state_path, [meta])
+    client = TestClient(create_app(state_path=state_path, wiki_dir=tmp_path / "wiki"))
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get("/categories/AI")
+    response = client.get("/")
+
     assert response.status_code == 200
-    assert "글 제목 1" in response.text
-    assert "글 제목 2" in response.text
-    assert "카테고리: ai" in response.text
+    assert "피드 A ·" not in response.text
 
 
-def test_category_articles_404_for_missing_name(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.get("/categories/존재하지않는카테고리")
-    assert response.status_code == 404
+def _write_feeds(path, feeds):
+    path.write_text(json.dumps(feeds, ensure_ascii=False), encoding="utf-8")
 
 
-def test_tag_articles_404_for_missing_name(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.get("/tags/없는태그")
-    assert response.status_code == 404
+def _fake_validate(url: str) -> dict:
+    return {"title": f"제목: {url}"}
 
 
-def test_feeds_index_empty(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.get("/feeds")
+def test_feeds_admin_lists_registered_feeds(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    _write_feeds(
+        feeds_path,
+        [{"name": "피드 A", "url": "https://example.com/a.xml", "added_at": "2026-07-01T00:00:00+00:00"}],
+    )
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
+
+    response = client.get("/feeds-admin")
+
     assert response.status_code == 200
-    assert "피드" in response.text
-    assert "아직 등록된 피드가 없습니다" in response.text
+    assert "피드 A" in response.text
+    assert "https://example.com/a.xml" in response.text
 
 
-def test_feeds_index_with_entries(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        upsert_feed(conn, "Google News", "https://news.google.com/rss")
-        upsert_feed(conn, "HN", "https://news.ycombinator.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
+def test_feeds_admin_shows_empty_state_for_zero_feeds(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get("/feeds")
+    response = client.get("/feeds-admin")
+
     assert response.status_code == 200
-    assert "Google News" in response.text
-    assert "https://news.google.com/rss" in response.text
-    assert "HN" in response.text
-    assert 'href="/feeds/' in response.text
+    assert "state-empty" in response.text
 
 
-def test_feed_edit_form_renders(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Google News", "https://news.google.com/rss")
-        set_feed_enabled(conn, feed_id, False)
-        conn.commit()
-    finally:
-        conn.close()
+def test_feeds_admin_add_registers_feed_and_redirects(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    _write_feeds(feeds_path, [])
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
 
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.get(f"/feeds/{feed_id}/edit")
-    assert response.status_code == 200
-    assert "Google News" in response.text
-    assert "https://news.google.com/rss" in response.text
-    assert 'action="/feeds/' in response.text
+    response = client.post(
+        "/feeds-admin/add", data={"url": "https://example.com/new.xml"}, follow_redirects=False
+    )
 
-
-def test_feed_edit_404_for_missing_id(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.get("/feeds/99999/edit")
-    assert response.status_code == 404
-
-
-def test_post_feeds_creates(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.post(
-            "/feeds",
-            data={"url": "https://example.com/rss", "name": "Example"},
-            follow_redirects=False,
-        )
     assert response.status_code == 303
-    assert response.headers["location"] == "/feeds?ok=created"
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feeds = list_feeds(conn)
-    finally:
-        conn.close()
-    assert len(feeds) == 1
-    assert feeds[0]["url"] == "https://example.com/rss"
-    assert feeds[0]["name"] == "Example"
+    assert response.headers["location"] == "/feeds-admin"
+    saved = json.loads(feeds_path.read_text(encoding="utf-8"))
+    assert saved == [
+        {
+            "name": "제목: https://example.com/new.xml",
+            "url": "https://example.com/new.xml",
+            "added_at": saved[0]["added_at"],
+        }
+    ]
 
 
-def test_post_feeds_normalizes_url(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.post(
-            "/feeds",
-            data={"url": "https://example.com/rss?utm_source=x", "name": "Example"},
-            follow_redirects=False,
-        )
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feeds = list_feeds(conn)
-    finally:
-        conn.close()
-    assert len(feeds) == 1
-    assert "utm_source" not in feeds[0]["url"]
+def test_feeds_admin_add_duplicate_url_rerenders_with_message_no_traceback(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    existing_url = "https://example.com/dup.xml"
+    _write_feeds(
+        feeds_path,
+        [{"name": "기존 피드", "url": existing_url, "added_at": "2026-07-01T00:00:00+00:00"}],
+    )
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
 
+    response = client.post("/feeds-admin/add", data={"url": existing_url})
 
-def test_post_feeds_duplicate_url_idempotent(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        r1 = client.post(
-            "/feeds",
-            data={"url": "https://example.com/rss", "name": "A"},
-            follow_redirects=False,
-        )
-        r2 = client.post(
-            "/feeds",
-            data={"url": "https://example.com/rss", "name": "B"},
-            follow_redirects=False,
-        )
-    assert r1.status_code == 303
-    assert r2.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feeds = list_feeds(conn)
-    finally:
-        conn.close()
-    assert len(feeds) == 1
-
-
-def test_post_feeds_rejects_empty_url(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    with TestClient(create_app(tmp_db)) as client:
-        response = client.post(
-            "/feeds",
-            data={"url": " ", "name": "x"},
-            follow_redirects=False,
-        )
     assert response.status_code == 400
+    assert "Traceback" not in response.text
+    assert "이미 등록된 피드" in response.text
+    saved = json.loads(feeds_path.read_text(encoding="utf-8"))
+    assert len(saved) == 1
 
 
-def test_post_feed_update(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Old", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(
-            f"/feeds/{feed_id}",
-            data={"name": "New", "enabled": "on"},
-            follow_redirects=False,
+def test_feeds_admin_add_invalid_url_rerenders_with_message_no_traceback(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    _write_feeds(feeds_path, [])
+
+    def _rejecting_validate(url: str) -> dict:
+        raise feeds_logic.FeedValidationError(f"피드를 파싱할 수 없거나 항목이 없습니다: {url}")
+
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_rejecting_validate))
+
+    response = client.post("/feeds-admin/add", data={"url": "https://example.com/invalid.xml"})
+
+    assert response.status_code == 400
+    assert "Traceback" not in response.text
+    assert "파싱할 수 없" in response.text
+    saved = json.loads(feeds_path.read_text(encoding="utf-8"))
+    assert saved == []
+
+
+def test_feeds_admin_remove_deletes_feed_and_redirects(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    target_url = "https://example.com/remove-me.xml"
+    _write_feeds(
+        feeds_path,
+        [{"name": "삭제 대상", "url": target_url, "added_at": "2026-07-01T00:00:00+00:00"}],
+    )
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
+
+    response = client.post("/feeds-admin/remove", data={"target": target_url}, follow_redirects=False)
+
+    assert response.status_code == 303
+    assert response.headers["location"] == "/feeds-admin"
+    saved = json.loads(feeds_path.read_text(encoding="utf-8"))
+    assert saved == []
+
+
+def test_feeds_admin_remove_nonexistent_rerenders_with_message_no_traceback(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    _write_feeds(feeds_path, [])
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
+
+    response = client.post("/feeds-admin/remove", data={"target": "https://example.com/nope.xml"})
+
+    assert response.status_code == 400
+    assert "Traceback" not in response.text
+    assert "일치하는 피드가 없습니다" in response.text
+
+
+def test_feeds_admin_add_preserves_url_with_plus_and_percent(tmp_path):
+    feeds_path = tmp_path / "feeds.json"
+    _write_feeds(feeds_path, [])
+    client = TestClient(create_app(feeds_path=feeds_path, validate=_fake_validate))
+    url = "https://example.com/feed+news.xml?tag=a%2Bb&label=100%25"
+
+    response = client.post("/feeds-admin/add", data={"url": url}, follow_redirects=False)
+
+    assert response.status_code == 303
+    saved = json.loads(feeds_path.read_text(encoding="utf-8"))
+    assert saved[0]["url"] == url
+    listing = client.get("/feeds-admin")
+    assert html.escape(url) in listing.text
+
+
+def test_static_styles_css_defines_feed_list_info_rule():
+    client = TestClient(create_app())
+
+    response = client.get("/static/styles.css")
+
+    assert response.status_code == 200
+    assert "feed-list__info" in response.text
+
+
+def _poll_progress_until_finished(client, *, max_tries=200, interval=0.01):
+    snapshot = None
+    for _ in range(max_tries):
+        snapshot = client.get("/fetch/progress").json()
+        if snapshot["status"] != "running":
+            return snapshot
+        time.sleep(interval)
+    return snapshot
+
+
+async def _fake_run_fetch_async_success(feeds, state, *, limit, now, collected_date, concurrency, on_progress=None):
+    if on_progress is not None:
+        await on_progress({"kind": "feed_started", "feed": "피드 A"})
+        await on_progress({"kind": "article_done", "feed": "피드 A"})
+    meta = {
+        "filename": "2026-07-07-새-글.md",
+        "title": "새 글",
+        "published": "2026-07-07",
+        "collected_date": collected_date,
+        "feed_name": "피드 A",
+    }
+    new_processed = dict(state.get("processed", {}))
+    new_processed["new-id"] = {"processed_at": now, "status": "ok", "meta": meta}
+    return {
+        "batch": [
+            {
+                "summary_result": {
+                    "summary": "요약",
+                    "title": "새 글",
+                    "link": "https://example.com/new",
+                    "published": "2026-07-07",
+                    "feed_name": "피드 A",
+                },
+                "collected_date": collected_date,
+                "filename": meta["filename"],
+            }
+        ],
+        "state": {**state, "processed": new_processed},
+        "report": {
+            "feeds": {"succeeded": 1, "failed": 0, "failures": []},
+            "articles": {"succeeded": 1, "failed": 0, "failures": []},
+        },
+    }
+
+
+async def _fake_run_fetch_async_slow(feeds, state, *, limit, now, collected_date, concurrency, on_progress=None):
+    await asyncio.sleep(0.2)
+    return await _fake_run_fetch_async_success(
+        feeds, state, limit=limit, now=now, collected_date=collected_date, concurrency=concurrency, on_progress=on_progress
+    )
+
+
+def test_fetch_trigger_runs_in_background_and_progress_reports_done(tmp_path):
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_success,
+            claude_available=lambda: True,
         )
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["name"] == "New"
-    assert feed["enabled"] == 1
+    )
+
+    trigger_response = client.post("/fetch")
+
+    assert trigger_response.status_code == 200
+    assert trigger_response.json()["status"] in ("running", "done")
+
+    snapshot = _poll_progress_until_finished(client)
+
+    assert snapshot["status"] == "done"
+    assert snapshot["report"]["articles"]["succeeded"] == 1
+    assert snapshot["feeds"]["피드 A"]["status"] == "running"
+    assert snapshot["articles"] == {"done": 1, "failed": 0}
 
 
-def test_post_feed_update_disables_when_unchecked(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Old", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(
-            f"/feeds/{feed_id}",
-            data={"name": "Same"},
-            follow_redirects=False,
+def test_fetch_trigger_persists_state_and_regenerates_wiki_index(tmp_path):
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_success,
+            claude_available=lambda: True,
         )
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["enabled"] == 0
+    )
+
+    client.post("/fetch")
+    _poll_progress_until_finished(client)
+
+    saved_state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert "new-id" in saved_state["processed"]
+    assert (wiki_dir / "index.md").exists()
+    assert (wiki_dir / "articles" / "2026-07-07-새-글.md").exists()
 
 
-def test_post_feed_delete(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Test", "https://example.com/rss")
-        art_id = insert_article(
-            conn,
-            feed_id=feed_id,
-            url="https://example.com/a1",
-            url_hash="h1",
-            title="Article 1",
-            title_hash="t1",
-            published_at="2026-05-01",
-            content=None,
-            summary=None,
+def test_fetch_trigger_while_running_is_blocked_without_traceback(tmp_path):
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_slow,
+            claude_available=lambda: True,
         )
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(f"/feeds/{feed_id}/delete", follow_redirects=False)
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feeds = list_feeds(conn)
-        article = conn.execute("SELECT * FROM articles WHERE id = ?", (art_id,)).fetchone()
-    finally:
-        conn.close()
-    assert len(feeds) == 0
-    assert article is not None
-    assert article["feed_id"] is None
-    assert article["feed_url_snapshot"] is not None
+    )
+
+    first = client.post("/fetch")
+    second = client.post("/fetch")
+
+    assert first.status_code == 200
+    assert second.status_code == 409
+    assert "Traceback" not in second.text
+    assert "이미" in second.json()["detail"]
+
+    _poll_progress_until_finished(client)
 
 
-def test_post_feed_toggle(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Test", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        r1 = client.post(f"/feeds/{feed_id}/toggle", follow_redirects=False)
-        assert r1.status_code == 303
-        conn2 = sqlite3.connect(tmp_db)
-        conn2.row_factory = sqlite3.Row
-        try:
-            feed = get_feed_by_id(conn2, feed_id)
-            assert feed["enabled"] == 0
-        finally:
-            conn2.close()
-        r2 = client.post(f"/feeds/{feed_id}/toggle", follow_redirects=False)
-        assert r2.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["enabled"] == 1
-
-
-def test_post_feed_reset(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "Test", "https://example.com/rss")
-        record_feed_failure(conn, feed_id)
-        record_feed_failure(conn, feed_id)
-        record_feed_failure(conn, feed_id)
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(f"/feeds/{feed_id}/reset", follow_redirects=False)
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["consecutive_failures"] == 0
-
-
-def test_post_feed_404_for_missing_id(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.post("/feeds/99999/delete", follow_redirects=False)
-    assert response.status_code == 404
-
-
-def test_static_style_css_served(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/static/style.css")
-    assert resp.status_code == 200
-    assert resp.headers["content-type"].startswith("text/css")
-    body = resp.text
-    assert ":root" in body
-    assert "--color-bg" in body
-    assert "@media (prefers-color-scheme: dark)" in body
-    assert ".gnb" in body
-
-
-def test_base_html_includes_stylesheet_link(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/")
-    assert resp.status_code == 200
-    assert '<link rel="stylesheet" href="/static/style.css">' in resp.text
-
-
-def test_base_html_renders_gnb_with_four_links(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/")
-    assert resp.status_code == 200
-    assert 'class="gnb"' in resp.text
-    assert "매거진" in resp.text
-    assert "카테고리" in resp.text
-    assert "태그" in resp.text
-    assert "피드 관리" in resp.text
-    assert 'href="/magazines"' in resp.text
-    assert 'href="/categories"' in resp.text
-    assert 'href="/tags"' in resp.text
-    assert 'href="/feeds"' in resp.text
-
-
-def test_base_html_includes_viewport_meta(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/")
-    assert resp.status_code == 200
-    assert '<meta name="viewport"' in resp.text
-
-
-def test_get_feeds_new_returns_form(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/feeds/new")
-    assert resp.status_code == 200
-    assert '<form method="post" action="/feeds">' in resp.text
-    assert 'name="url"' in resp.text
-    assert 'name="name"' in resp.text
-
-
-def test_post_feed_update_changes_url(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "X", "https://a.example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(
-            f"/feeds/{feed_id}",
-            data={"name": "X", "url": "https://b.example.com/rss", "enabled": "on"},
-            follow_redirects=False,
+def test_fetch_progress_returns_tracker_snapshot_unmodified(tmp_path):
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_success,
+            claude_available=lambda: True,
         )
-    assert response.status_code == 303
-    assert response.headers["location"] == "/feeds?ok=updated"
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["url"] == "https://b.example.com/rss"
+    )
+
+    before = client.get("/fetch/progress").json()
+    assert before == {
+        "status": "idle",
+        "feeds": {},
+        "articles": {"done": 0, "failed": 0},
+        "report": None,
+        "error": None,
+    }
+
+    client.post("/fetch")
+    snapshot = _poll_progress_until_finished(client)
+
+    assert snapshot["report"] == {
+        "feeds": {"succeeded": 1, "failed": 0, "failures": []},
+        "articles": {"succeeded": 1, "failed": 0, "failures": []},
+    }
 
 
-def test_post_feed_update_duplicate_url_redirects_to_edit_with_error(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_a_id = upsert_feed(conn, "A", "https://a.example.com/rss")
-        feed_b_id = upsert_feed(conn, "B", "https://b.example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(
-            f"/feeds/{feed_b_id}",
-            data={"name": "B", "url": "https://a.example.com/rss"},
-            follow_redirects=False,
+def test_fetch_trigger_transitions_to_error_when_claude_unavailable(tmp_path):
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_success,
+            claude_available=lambda: False,
         )
-    assert response.status_code == 303
-    assert response.headers["location"] == f"/feeds/{feed_b_id}/edit?error=duplicate"
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_b = get_feed_by_id(conn, feed_b_id)
-    finally:
-        conn.close()
-    assert feed_b["url"] == "https://b.example.com/rss"
+    )
+
+    client.post("/fetch")
+    snapshot = _poll_progress_until_finished(client)
+
+    assert snapshot["status"] == "error"
+    assert "claude" in snapshot["error"]
 
 
-def test_post_feed_update_empty_url_keeps_existing(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "X", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        response = client.post(
-            f"/feeds/{feed_id}",
-            data={"name": "X", "url": ""},
-            follow_redirects=False,
+def test_fetch_page_renders_trigger_form_progress_area_and_polling_script(tmp_path):
+    client = TestClient(
+        create_app(state_path=tmp_path / "state.json", wiki_dir=tmp_path / "wiki")
+    )
+
+    response = client.get("/fetch")
+
+    assert response.status_code == 200
+    assert '<form id="fetch-trigger-form"' in response.text
+    assert 'id="fetch-trigger-button"' in response.text
+    assert 'id="fetch-progress"' in response.text
+    assert '/static/fetch.js' in response.text
+
+    script_response = client.get("/static/fetch.js")
+    assert script_response.status_code == 200
+
+
+def test_static_fetch_js_is_served_as_javascript():
+    client = TestClient(create_app())
+
+    response = client.get("/static/fetch.js")
+
+    assert response.status_code == 200
+    assert "javascript" in response.headers["content-type"]
+
+
+def test_header_nav_links_to_fetch_page():
+    client = TestClient(create_app())
+
+    response = client.get("/")
+
+    assert 'href="/fetch"' in response.text
+
+
+def test_fetch_trigger_transitions_to_error_when_write_wiki_fails(tmp_path):
+    """완료 단계에서 `write_wiki`가 예외를 올리면 트래커가 `error`로 전이하고
+
+    `GET /fetch/progress` 스냅샷에 오류 메시지가 노출됨을 확인한다(REVIEW T27
+    메모 2 해소). `wiki_dir` 자리에 파일을 미리 만들어 두면 `write_wiki`의
+    `directory.mkdir(parents=True, ...)`이 자연스럽게 실패한다.
+    """
+    state_path = tmp_path / "state.json"
+    wiki_dir = tmp_path / "wiki"
+    wiki_dir.write_text("이 경로는 디렉터리가 아니라 파일입니다.", encoding="utf-8")
+    _write_state(state_path, [])
+    client = TestClient(
+        create_app(
+            state_path=state_path,
+            wiki_dir=wiki_dir,
+            run_fetch_async=_fake_run_fetch_async_success,
+            claude_available=lambda: True,
         )
-    assert response.status_code == 303
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed = get_feed_by_id(conn, feed_id)
-    finally:
-        conn.close()
-    assert feed["url"] == "https://example.com/rss"
+    )
 
+    client.post("/fetch")
+    snapshot = _poll_progress_until_finished(client)
 
-def test_feeds_create_redirects_with_ok(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        response = client.post(
-            "/feeds",
-            data={"url": "https://example.com/rss"},
-            follow_redirects=False,
-        )
-    assert response.status_code == 303
-    assert response.headers["location"] == "/feeds?ok=created"
-
-
-def test_feeds_index_renders_flash_on_ok_query(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/feeds?ok=created")
-    assert resp.status_code == 200
-    assert 'class="flash flash-success"' in resp.text
-    assert "피드를 추가했습니다." in resp.text
-
-
-def test_feed_edit_renders_flash_on_error_query(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        feed_id = upsert_feed(conn, "X", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        resp = client.get(f"/feeds/{feed_id}/edit?error=duplicate")
-    assert resp.status_code == 200
-    assert 'class="flash flash-danger"' in resp.text
-
-
-# ── T-019C: 7 new test cases ─────────────────────────────────────────────
-
-
-def test_tags_index_empty(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/tags")
-    assert resp.status_code == 200
-    assert "태그" in resp.text
-    assert "아직 항목이 없습니다" in resp.text
-
-
-def test_tags_index_with_entries(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        upsert_tag(conn, "ai")
-        upsert_tag(conn, "kotlin")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        resp = client.get("/tags")
-    assert resp.status_code == 200
-    assert "ai" in resp.text
-    assert "kotlin" in resp.text
-    assert 'href="/tags/ai"' in resp.text
-    assert 'href="/tags/kotlin"' in resp.text
-    assert 'class="card"' in resp.text
-
-
-def test_active_nav_marks_feeds_link_when_on_feeds_page(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/feeds")
-    assert resp.status_code == 200
-    assert 'href="/feeds" class="active"' in resp.text
-
-
-def test_active_nav_marks_magazines_link_when_on_magazines_page(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/magazines")
-    assert resp.status_code == 200
-    assert 'href="/magazines" class="active"' in resp.text
-
-
-def test_active_nav_marks_tags_link_when_on_tags_page(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/tags")
-    assert resp.status_code == 200
-    assert 'href="/tags" class="active"' in resp.text
-
-
-def test_feeds_html_uses_btn_class(tmp_path):
-    tmp_db = tmp_path / "x.db"
-    init_db(tmp_db)
-    conn = sqlite3.connect(tmp_db)
-    conn.row_factory = sqlite3.Row
-    try:
-        upsert_feed(conn, "Example", "https://example.com/rss")
-        conn.commit()
-    finally:
-        conn.close()
-    with TestClient(create_app(tmp_db, run_init_db=False)) as client:
-        resp = client.get("/feeds")
-    assert resp.status_code == 200
-    assert 'class="btn' in resp.text
-
-
-def test_magazine_body_styles_in_css(tmp_path):
-    with TestClient(create_app(tmp_path / "x.db")) as client:
-        resp = client.get("/static/style.css")
-    assert resp.status_code == 200
-    assert ".magazine-body" in resp.text
-    assert "pre" in resp.text
-    assert "blockquote" in resp.text
+    assert snapshot["status"] == "error"
+    assert snapshot["error"]

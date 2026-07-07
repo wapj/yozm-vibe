@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.title }} - rss-wiki{% endblock %}
+{% block content %}
+<article class="prose">
+  {{ article_html | safe }}
+</article>
+<aside class="article-meta">
+  <p>발행일: {{ meta.published }}</p>
+  <p>피드: {{ meta.feed_name }}</p>
+</aside>
+{% endblock %}

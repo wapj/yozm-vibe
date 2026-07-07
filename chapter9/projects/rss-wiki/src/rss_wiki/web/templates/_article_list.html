@@ -1,0 +1,14 @@
+{% if articles %}
+<ul class="article-list">
+  {% for article in articles %}
+  <li class="article-list__item">
+    <a class="article-list__title" href="/articles/{{ article.filename }}">{{ article.title }}</a>
+    <p class="article-list__meta">{{ article.feed_name }}{% if article.published %} · {{ article.published }}{% endif %}</p>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="state state-empty">
+  <p>표시할 글이 없습니다.</p>
+</div>
+{% endif %}

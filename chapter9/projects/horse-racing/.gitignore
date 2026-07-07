@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store

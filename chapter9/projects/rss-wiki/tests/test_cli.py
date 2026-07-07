@@ -1,474 +1,318 @@
-from __future__ import annotations
+import copy
 
-import json
-from datetime import date
-from pathlib import Path
+from typer.testing import CliRunner
 
-import pytest
+from rss_wiki import cli, feeds as feeds_logic, pipeline, store, wiki
 
-from rss_wiki.config import FeedConfig
-from rss_wiki.ingest.fetcher import FeedEntry
-from rss_wiki.storage.db import get_connection, init_db
-from rss_wiki.storage.repo import insert_article, upsert_feed
-from rss_wiki.cli import is_friday, is_last_friday_of_month, run_daily, run_weekly, run_monthly, run_web, main
-import rss_wiki.cli
+runner = CliRunner()
 
 
-def _setup_db(tmp_path: Path):
-    db_path = tmp_path / "test.db"
-    init_db(db_path)
-    conn = get_connection(db_path)
-    return db_path, conn
+def test_add_converts_store_error_to_user_facing_message(monkeypatch):
+    monkeypatch.setattr(store, "load_feeds", lambda: (_ for _ in ()).throw(store.StoreError("손상된 feeds 파일")))
+
+    result = runner.invoke(cli.app, ["add", "http://example.com/rss"])
+
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Traceback" not in result.output
+    assert "오류" in result.output
 
 
-def _fake_runner(prompt: str) -> str:
-    if "JSON 스키마" in prompt:
-        return json.dumps({"summary": "요약", "category": "AI", "tags": ["llm"]})
-    if "주간(한 주)" in prompt:
-        return "주간 통합 요약 단락"
-    if "월간(한 달)" in prompt:
-        return "월간 통합 요약 단락"
-    return "AI 트렌드 단락"
-
-
-# --- 트리거 판정 함수 테스트 ---
-
-def test_is_friday_true_for_friday():
-    assert is_friday(date(2026, 5, 1)) is True   # 금요일
-    assert is_friday(date(2026, 5, 2)) is False   # 토요일
-    assert is_friday(date(2026, 5, 4)) is False   # 월요일
-
-
-def test_is_last_friday_of_month_true_for_last_friday():
-    # 5월 마지막 금요일: 29+7=36 > 31 → True
-    assert is_last_friday_of_month(date(2026, 5, 29)) is True
-
-
-def test_is_last_friday_of_month_false_for_non_last_friday():
-    # 5월 22일 금요일, 다음 금요일(29일)이 같은 5월에 있음 → False
-    assert is_last_friday_of_month(date(2026, 5, 22)) is False
-
-
-def test_is_last_friday_of_month_false_for_non_friday():
-    # 5월 31일 일요일
-    assert is_last_friday_of_month(date(2026, 5, 31)) is False
-
-
-# --- run_daily 테스트 ---
-
-def test_run_daily_invokes_pipeline_and_commits(tmp_path, monkeypatch):
-    db_path, conn = _setup_db(tmp_path)
-    output_dir = tmp_path / "output"
-    feeds = [FeedConfig(name="TestFeed", url="https://example.com/rss")]
-
-    fake_entry = FeedEntry(
-        url="https://example.com/article/1",
-        title="AI 글제목",
-        published_at="2026-05-04",
-        summary=None,
-    )
-    monkeypatch.setattr("rss_wiki.pipeline.ingest.fetch_feed", lambda url: [fake_entry])
-    monkeypatch.setattr("rss_wiki.pipeline.ingest.extract_body", lambda entry: "본문 내용")
-
-    try:
-        result = run_daily(
-            conn=conn,
-            feeds=feeds,
-            output_dir=output_dir,
-            runner=_fake_runner,
-            now=date(2026, 5, 4),  # 월요일, 트리거 미충족
-        )
-    finally:
-        conn.close()
-
-    assert result == 0
-    assert (output_dir / "daily-2026-05-04.md").exists()
-    assert not list(output_dir.glob("weekly-*.md"))
-    assert not list(output_dir.glob("monthly-*.md"))
-
-    # conn.commit() 검증: 새 connection으로 row 확인
-    conn2 = get_connection(db_path)
-    try:
-        count = conn2.execute("SELECT COUNT(*) FROM magazines WHERE kind='daily'").fetchone()[0]
-        assert count == 1
-    finally:
-        conn2.close()
-
-
-def test_run_daily_triggers_weekly_on_friday(tmp_path, monkeypatch):
-    db_path, conn = _setup_db(tmp_path)
-    output_dir = tmp_path / "output"
-    feeds = [FeedConfig(name="TestFeed", url="https://example.com/rss")]
-
-    # 사전 INSERT: published_at="2026-05-01", summary 빈 문자열 (미분석)
-    feed_id = upsert_feed(conn, "TestFeed", "https://example.com/rss")
-    insert_article(
-        conn,
-        feed_id=feed_id,
-        url="https://example.com/friday-article",
-        url_hash="hash_friday_article",
-        title="금요일 글",
-        title_hash="th_friday_article",
-        published_at="2026-05-01",
-        content="금요일 본문",
-        summary="",
+def test_add_converts_duplicate_feed_error_to_user_facing_message(monkeypatch):
+    monkeypatch.setattr(store, "load_feeds", lambda: [])
+    monkeypatch.setattr(
+        feeds_logic,
+        "add_feed",
+        lambda current, url: (_ for _ in ()).throw(feeds_logic.DuplicateFeedError(f"이미 등록된 피드입니다: {url}")),
     )
 
-    # 새 항목 없음 (이미 DB에 있는 글 사용)
-    monkeypatch.setattr("rss_wiki.pipeline.ingest.fetch_feed", lambda url: [])
+    result = runner.invoke(cli.app, ["add", "http://example.com/rss"])
 
-    try:
-        result = run_daily(
-            conn=conn,
-            feeds=feeds,
-            output_dir=output_dir,
-            runner=_fake_runner,
-            now=date(2026, 5, 1),  # 금요일, 마지막 금요일 아님
-        )
-    finally:
-        conn.close()
-
-    assert result == 0
-    assert (output_dir / "daily-2026-05-01.md").exists()
-    assert (output_dir / "weekly-2026-W18.md").exists()
-    assert not list(output_dir.glob("monthly-*.md"))
-
-    conn2 = get_connection(db_path)
-    try:
-        rows = conn2.execute("SELECT kind FROM magazines ORDER BY id ASC").fetchall()
-        assert len(rows) == 2
-        kinds = {r["kind"] for r in rows}
-        assert kinds == {"daily", "weekly"}
-    finally:
-        conn2.close()
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Traceback" not in result.output
+    assert "오류" in result.output
 
 
-def test_run_daily_triggers_monthly_on_last_friday(tmp_path, monkeypatch):
-    db_path, conn = _setup_db(tmp_path)
-    output_dir = tmp_path / "output"
-    feeds = [FeedConfig(name="TestFeed", url="https://example.com/rss")]
-
-    # 사전 INSERT: published_at="2026-05-15", summary 빈 문자열 (월간 범위에 포함)
-    feed_id = upsert_feed(conn, "TestFeed", "https://example.com/rss")
-    insert_article(
-        conn,
-        feed_id=feed_id,
-        url="https://example.com/monthly-article",
-        url_hash="hash_monthly_article",
-        title="월간 테스트 글",
-        title_hash="th_monthly_article",
-        published_at="2026-05-15",
-        content="월간 본문",
-        summary="",
+def test_add_converts_feed_validation_error_to_user_facing_message(monkeypatch):
+    monkeypatch.setattr(store, "load_feeds", lambda: [])
+    monkeypatch.setattr(
+        feeds_logic,
+        "add_feed",
+        lambda current, url: (_ for _ in ()).throw(feeds_logic.FeedValidationError("피드를 파싱할 수 없습니다")),
     )
 
-    # 페처는 주간 범위[2026-05-23, 2026-05-29]에 속하는 글 1개 반환
-    weekly_entry = FeedEntry(
-        url="https://example.com/weekly-article",
-        title="주간 테스트 글",
-        published_at="2026-05-27",
-        summary=None,
-    )
-    monkeypatch.setattr("rss_wiki.pipeline.ingest.fetch_feed", lambda url: [weekly_entry])
-    monkeypatch.setattr("rss_wiki.pipeline.ingest.extract_body", lambda entry: "주간 본문")
+    result = runner.invoke(cli.app, ["add", "http://example.com/rss"])
 
-    try:
-        result = run_daily(
-            conn=conn,
-            feeds=feeds,
-            output_dir=output_dir,
-            runner=_fake_runner,
-            now=date(2026, 5, 29),  # 5월 마지막 금요일
-        )
-    finally:
-        conn.close()
-
-    assert result == 0
-    assert (output_dir / "daily-2026-05-29.md").exists()
-    assert (output_dir / "weekly-2026-W22.md").exists()
-    assert (output_dir / "monthly-2026-05.md").exists()
-
-    conn2 = get_connection(db_path)
-    try:
-        count = conn2.execute("SELECT COUNT(*) FROM magazines").fetchone()[0]
-        assert count == 3
-        kinds = {r["kind"] for r in conn2.execute("SELECT kind FROM magazines").fetchall()}
-        assert kinds == {"daily", "weekly", "monthly"}
-    finally:
-        conn2.close()
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Traceback" not in result.output
+    assert "오류" in result.output
 
 
-# --- run_weekly 테스트 ---
-
-def test_run_weekly_bypasses_trigger(tmp_path):
-    db_path, conn = _setup_db(tmp_path)
-    output_dir = tmp_path / "output"
-
-    # 주간 범위 [2026-04-28, 2026-05-04] 안에 article 1개
-    feed_id = upsert_feed(conn, "TestFeed", "https://example.com/rss")
-    insert_article(
-        conn,
-        feed_id=feed_id,
-        url="https://example.com/weekly-bypass-article",
-        url_hash="hash_weekly_bypass",
-        title="주간 우회 테스트 글",
-        title_hash="th_weekly_bypass",
-        published_at="2026-05-04",
-        content="본문",
-        summary="기존 요약",
+def test_remove_converts_feed_not_found_error_to_user_facing_message(monkeypatch):
+    monkeypatch.setattr(store, "load_feeds", lambda: [])
+    monkeypatch.setattr(
+        feeds_logic,
+        "remove_feed",
+        lambda current, target: (_ for _ in ()).throw(feeds_logic.FeedNotFoundError(f"일치하는 피드가 없습니다: {target}")),
     )
 
-    try:
-        result = run_weekly(
-            conn=conn,
-            end_date="2026-05-04",
-            output_dir=output_dir,
-            runner=_fake_runner,
-        )
-    finally:
-        conn.close()
+    result = runner.invoke(cli.app, ["remove", "없는피드"])
 
-    assert result == 0
-    assert (output_dir / "weekly-2026-W19.md").exists()
-    assert not list(output_dir.glob("daily-*.md"))
-
-    conn2 = get_connection(db_path)
-    try:
-        count = conn2.execute("SELECT COUNT(*) FROM magazines WHERE kind='weekly'").fetchone()[0]
-        assert count == 1
-    finally:
-        conn2.close()
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Traceback" not in result.output
+    assert "오류" in result.output
 
 
-# --- run_monthly 테스트 ---
+def test_list_converts_store_error_to_user_facing_message(monkeypatch):
+    monkeypatch.setattr(store, "load_feeds", lambda: (_ for _ in ()).throw(store.StoreError("손상된 feeds 파일")))
 
-def test_run_monthly_bypasses_trigger(tmp_path):
-    db_path, conn = _setup_db(tmp_path)
-    output_dir = tmp_path / "output"
+    result = runner.invoke(cli.app, ["list"])
 
-    # 월간 범위 [2026-05-01, 2026-05-29] 안에 article 1개
-    feed_id = upsert_feed(conn, "TestFeed", "https://example.com/rss")
-    insert_article(
-        conn,
-        feed_id=feed_id,
-        url="https://example.com/monthly-bypass-article",
-        url_hash="hash_monthly_bypass",
-        title="월간 우회 테스트 글",
-        title_hash="th_monthly_bypass",
-        published_at="2026-05-15",
-        content="본문",
-        summary="기존 요약",
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Traceback" not in result.output
+    assert "오류" in result.output
+
+
+def test_fetch_exits_nonzero_with_message_when_claude_missing(monkeypatch):
+    monkeypatch.setattr(cli, "_claude_available", lambda: False)
+
+    result = runner.invoke(cli.app, ["fetch"])
+
+    assert result.exit_code != 0
+    assert "claude" in result.output.lower()
+
+
+def _sample_state():
+    return {
+        "processed": {
+            "old1": {
+                "processed_at": "2026-07-01T00:00:00+00:00",
+                "status": "ok",
+                "meta": {
+                    "filename": "2026-07-01-이전-글.md",
+                    "title": "이전 글",
+                    "published": "2026-07-01",
+                    "collected_date": "2026-07-01",
+                    "feed_name": "피드A",
+                },
+            }
+        }
+    }
+
+
+def _run_fetch_result(*, feeds_succeeded, feeds_failed, articles_succeeded, articles_failed):
+    original = _sample_state()
+    new_state = copy.deepcopy(original)
+    if articles_succeeded:
+        new_state["processed"]["new1"] = {
+            "processed_at": "2026-07-07T00:00:00+00:00",
+            "status": "ok",
+            "meta": {
+                "filename": "2026-07-07-새-글.md",
+                "title": "새 글",
+                "published": "2026-07-07",
+                "collected_date": "2026-07-07",
+                "feed_name": "피드A",
+            },
+        }
+    batch = (
+        [
+            {
+                "summary_result": {
+                    "title": "새 글",
+                    "link": "https://example.com/new",
+                    "published": "2026-07-07T00:00:00Z",
+                    "feed_name": "피드A",
+                    "summary": "새 글 요약",
+                },
+                "collected_date": "2026-07-07",
+                "filename": "2026-07-07-새-글.md",
+            }
+        ]
+        if articles_succeeded
+        else []
     )
-
-    try:
-        result = run_monthly(
-            conn=conn,
-            end_date="2026-05-29",
-            output_dir=output_dir,
-            runner=_fake_runner,
-        )
-    finally:
-        conn.close()
-
-    assert result == 0
-    assert (output_dir / "monthly-2026-05.md").exists()
-
-    conn2 = get_connection(db_path)
-    try:
-        count = conn2.execute("SELECT COUNT(*) FROM magazines WHERE kind='monthly'").fetchone()[0]
-        assert count == 1
-    finally:
-        conn2.close()
+    return {
+        "batch": batch,
+        "state": new_state,
+        "report": {
+            "feeds": {"succeeded": feeds_succeeded, "failed": feeds_failed, "failures": []},
+            "articles": {"succeeded": articles_succeeded, "failed": articles_failed, "failures": []},
+        },
+    }
 
 
-# --- main 디스패치 테스트 ---
+def _make_fake_run_fetch_async(fake_result):
+    async def fake_run_fetch_async(feeds, state, *, limit, now, collected_date, concurrency):
+        return fake_result
 
-def test_main_dispatches_daily_subcommand(tmp_path, monkeypatch):
-    db_path = tmp_path / "db.sqlite"
-    feeds_toml = tmp_path / "feeds.toml"
-    feeds_toml.write_text('[[feed]]\nurl = "https://example.com/rss"\nname = "Test"\n')
-    output_dir = tmp_path / "output"
-
-    monkeypatch.setattr(rss_wiki.cli, "run_daily", lambda **kw: 0)
-
-    result = main([
-        "--db", str(db_path),
-        "--feeds", str(feeds_toml),
-        "--output", str(output_dir),
-        "daily",
-    ])
-
-    assert result == 0
-    assert db_path.exists()
+    return fake_run_fetch_async
 
 
-def test_main_dispatches_weekly_subcommand(tmp_path, monkeypatch):
-    db_path = tmp_path / "db.sqlite"
-    feeds_toml = tmp_path / "feeds.toml"
-    feeds_toml.write_text('[[feed]]\nurl = "https://example.com/rss"\nname = "Test"\n')
-    output_dir = tmp_path / "output"
+def test_fetch_partial_failure_exits_zero_and_reports_counts(monkeypatch):
+    original_state = _sample_state()
+    original_snapshot = copy.deepcopy(original_state)
+    fake_result = _run_fetch_result(feeds_succeeded=1, feeds_failed=0, articles_succeeded=1, articles_failed=1)
 
-    captured: dict = {}
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [{"name": "피드A", "url": "http://a", "added_at": "x"}])
+    monkeypatch.setattr(store, "load_state", lambda: original_state)
 
-    def fake_run_weekly(**kw):
-        captured.update(kw)
-        return 0
+    captured_run_fetch_args = {}
 
-    claude_call: dict = {}
+    async def fake_run_fetch_async(feeds, state, *, limit, now, collected_date, concurrency):
+        captured_run_fetch_args["feeds"] = feeds
+        captured_run_fetch_args["state"] = state
+        captured_run_fetch_args["concurrency"] = concurrency
+        return fake_result
 
-    def fake_call_claude(prompt, *, timeout):
-        claude_call["prompt"] = prompt
-        claude_call["timeout"] = timeout
-        return "ok"
+    monkeypatch.setattr(pipeline, "run_fetch_async", fake_run_fetch_async)
 
-    monkeypatch.setattr(rss_wiki.cli, "call_claude", fake_call_claude)
-    monkeypatch.setattr(rss_wiki.cli, "run_weekly", fake_run_weekly)
+    captured_write_wiki_args = {}
 
-    result = main([
-        "--db", str(db_path),
-        "--feeds", str(feeds_toml),
-        "--output", str(output_dir),
-        "weekly",
-        "--end-date", "2026-05-04",
-        "--llm-timeout", "180",
-    ])
+    def fake_write_wiki(batch, *, all_meta=None, **kwargs):
+        captured_write_wiki_args["batch"] = batch
+        captured_write_wiki_args["all_meta"] = all_meta
 
-    assert result == 0
-    assert db_path.exists()
-    assert captured.get("end_date") == "2026-05-04"
-    assert captured["runner"]("prompt") == "ok"
-    assert claude_call == {"prompt": "prompt", "timeout": 180.0}
+    monkeypatch.setattr(wiki, "write_wiki", fake_write_wiki)
 
+    captured_save_state_args = {}
 
-def test_main_daily_bootstraps_and_runs(tmp_path, monkeypatch):
-    db_path = tmp_path / "db.sqlite"
-    feeds_toml = tmp_path / "feeds.toml"
-    feeds_toml.write_text('[[feed]]\nurl = "https://example.com/rss"\nname = "Test"\n')
-    output_dir = tmp_path / "output"
+    def fake_save_state(state):
+        captured_save_state_args["state"] = state
 
-    def fake_run_daily(**kw):
-        kw["conn"].commit()
-        return 0
+    monkeypatch.setattr(store, "save_state", fake_save_state)
 
-    monkeypatch.setattr(rss_wiki.cli, "run_daily", fake_run_daily)
+    result = runner.invoke(cli.app, ["fetch"])
 
-    result = main([
-        "--db", str(db_path),
-        "--feeds", str(feeds_toml),
-        "--output", str(output_dir),
-        "daily",
-    ])
+    assert result.exit_code == 0
+    assert "성공 1건" in result.output
+    assert "실패 1건" in result.output
 
-    assert result == 0
-    conn = get_connection(db_path)
-    try:
-        rows = conn.execute("SELECT * FROM feeds").fetchall()
-        assert len(rows) >= 1
-        assert rows[0]["url"] == "https://example.com/rss"
-    finally:
-        conn.close()
+    assert captured_write_wiki_args["batch"] == fake_result["batch"]
+    assert {meta["filename"] for meta in captured_write_wiki_args["all_meta"]} == {
+        "2026-07-01-이전-글.md",
+        "2026-07-07-새-글.md",
+    }
+    assert captured_save_state_args["state"] == fake_result["state"]
+    assert original_state == original_snapshot
+    assert captured_run_fetch_args["concurrency"] == 4
 
 
-def test_main_dispatches_monthly_subcommand(tmp_path, monkeypatch):
-    db_path = tmp_path / "db.sqlite"
-    feeds_toml = tmp_path / "feeds.toml"
-    feeds_toml.write_text('[[feed]]\nurl = "https://example.com/rss"\nname = "Test"\n')
-    output_dir = tmp_path / "output"
+def test_fetch_feed_parsed_but_all_articles_failed_exits_nonzero(monkeypatch):
+    fake_result = _run_fetch_result(feeds_succeeded=1, feeds_failed=0, articles_succeeded=0, articles_failed=1)
 
-    captured: dict = {}
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [{"name": "피드A", "url": "http://a", "added_at": "x"}])
+    monkeypatch.setattr(store, "load_state", lambda: _sample_state())
+    monkeypatch.setattr(
+        pipeline,
+        "run_fetch_async",
+        _make_fake_run_fetch_async(fake_result),
+    )
+    monkeypatch.setattr(wiki, "write_wiki", lambda batch, *, all_meta=None, **kwargs: None)
+    monkeypatch.setattr(store, "save_state", lambda state: None)
 
-    def fake_run_monthly(**kw):
-        captured.update(kw)
-        return 0
+    result = runner.invoke(cli.app, ["fetch"])
 
-    monkeypatch.setattr(rss_wiki.cli, "run_monthly", fake_run_monthly)
-
-    result = main([
-        "--db", str(db_path),
-        "--feeds", str(feeds_toml),
-        "--output", str(output_dir),
-        "monthly",
-        "--end-date", "2026-05-29",
-    ])
-
-    assert result == 0
-    assert db_path.exists()
-    assert captured.get("end_date") == "2026-05-29"
+    assert result.exit_code != 0
 
 
-# --- run_web / web 서브커맨드 테스트 ---
+def test_fetch_total_failure_exits_nonzero(monkeypatch):
+    fake_result = _run_fetch_result(feeds_succeeded=0, feeds_failed=1, articles_succeeded=0, articles_failed=0)
 
-def test_run_web_invokes_uvicorn_with_create_app(tmp_path):
-    from fastapi import FastAPI
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [{"name": "피드A", "url": "http://a", "added_at": "x"}])
+    monkeypatch.setattr(store, "load_state", lambda: _sample_state())
+    monkeypatch.setattr(
+        pipeline,
+        "run_fetch_async",
+        _make_fake_run_fetch_async(fake_result),
+    )
+    monkeypatch.setattr(wiki, "write_wiki", lambda batch, *, all_meta=None, **kwargs: None)
+    monkeypatch.setattr(store, "save_state", lambda state: None)
 
-    db_path = tmp_path / "x.db"
-    init_db(db_path)
+    result = runner.invoke(cli.app, ["fetch"])
 
-    captured: list[tuple] = []
-
-    def fake(app, **kw):
-        captured.append((app, kw))
-
-    rc = run_web(db_path=db_path, host="127.0.0.1", port=8765, run_uvicorn=fake)
-
-    assert rc == 0
-    assert len(captured) == 1
-    (app, kw) = captured[0]
-    assert kw["host"] == "127.0.0.1"
-    assert kw["port"] == 8765
-    assert kw["log_level"] == "info"
-    assert isinstance(app, FastAPI)
+    assert result.exit_code != 0
 
 
-def test_run_web_passes_custom_host_port(tmp_path):
-    from fastapi import FastAPI
+def test_fetch_no_new_articles_exits_zero(monkeypatch):
+    fake_result = _run_fetch_result(feeds_succeeded=1, feeds_failed=0, articles_succeeded=0, articles_failed=0)
 
-    db_path = tmp_path / "x.db"
-    init_db(db_path)
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [{"name": "피드A", "url": "http://a", "added_at": "x"}])
+    monkeypatch.setattr(store, "load_state", lambda: _sample_state())
+    monkeypatch.setattr(
+        pipeline,
+        "run_fetch_async",
+        _make_fake_run_fetch_async(fake_result),
+    )
+    monkeypatch.setattr(wiki, "write_wiki", lambda batch, *, all_meta=None, **kwargs: None)
+    monkeypatch.setattr(store, "save_state", lambda state: None)
 
-    captured: list[tuple] = []
+    result = runner.invoke(cli.app, ["fetch"])
 
-    def fake(app, **kw):
-        captured.append((app, kw))
-
-    run_web(db_path=db_path, host="0.0.0.0", port=9000, run_uvicorn=fake)
-
-    assert len(captured) == 1
-    (app, kw) = captured[0]
-    assert kw["host"] == "0.0.0.0"
-    assert kw["port"] == 9000
-
-
-def test_main_web_subcommand_routes_to_run_web(tmp_path, monkeypatch):
-    db_path = tmp_path / "x.db"
-
-    captured: list[tuple] = []
-
-    def fake(app, **kw):
-        captured.append((app, kw))
-
-    monkeypatch.setattr(rss_wiki.cli, "_default_uvicorn_run", lambda: fake)
-
-    rc = main(["--db", str(db_path), "web"])
-
-    assert rc == 0
-    assert len(captured) == 1
-    assert captured[0][1]["host"] == "127.0.0.1"
-    assert captured[0][1]["port"] == 8765
+    assert result.exit_code == 0
 
 
-def test_main_web_subcommand_honors_host_port_args(tmp_path, monkeypatch):
-    db_path = tmp_path / "x.db"
+def test_fetch_no_feeds_registered_exits_zero(monkeypatch):
+    fake_result = _run_fetch_result(feeds_succeeded=0, feeds_failed=0, articles_succeeded=0, articles_failed=0)
 
-    captured: list[tuple] = []
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [])
+    monkeypatch.setattr(store, "load_state", lambda: _sample_state())
+    monkeypatch.setattr(
+        pipeline,
+        "run_fetch_async",
+        _make_fake_run_fetch_async(fake_result),
+    )
+    monkeypatch.setattr(wiki, "write_wiki", lambda batch, *, all_meta=None, **kwargs: None)
+    monkeypatch.setattr(store, "save_state", lambda state: None)
 
-    def fake(app, **kw):
-        captured.append((app, kw))
+    result = runner.invoke(cli.app, ["fetch"])
 
-    monkeypatch.setattr(rss_wiki.cli, "_default_uvicorn_run", lambda: fake)
+    assert result.exit_code == 0
 
-    main(["--db", str(db_path), "web", "--host", "0.0.0.0", "--port", "9000"])
 
-    assert len(captured) == 1
-    assert captured[0][1]["host"] == "0.0.0.0"
-    assert captured[0][1]["port"] == 9000
+def test_fetch_passes_concurrency_option_to_pipeline(monkeypatch):
+    fake_result = _run_fetch_result(feeds_succeeded=1, feeds_failed=0, articles_succeeded=1, articles_failed=0)
+
+    monkeypatch.setattr(cli, "_claude_available", lambda: True)
+    monkeypatch.setattr(store, "load_feeds", lambda: [{"name": "피드A", "url": "http://a", "added_at": "x"}])
+    monkeypatch.setattr(store, "load_state", lambda: _sample_state())
+
+    captured = {}
+
+    async def fake_run_fetch_async(feeds, state, *, limit, now, collected_date, concurrency):
+        captured["concurrency"] = concurrency
+        return fake_result
+
+    monkeypatch.setattr(pipeline, "run_fetch_async", fake_run_fetch_async)
+    monkeypatch.setattr(wiki, "write_wiki", lambda batch, *, all_meta=None, **kwargs: None)
+    monkeypatch.setattr(store, "save_state", lambda state: None)
+
+    result = runner.invoke(cli.app, ["fetch", "--concurrency", "7"])
+
+    assert result.exit_code == 0
+    assert captured["concurrency"] == 7
+
+
+def test_serve_help_shows_host_and_port_options():
+    result = runner.invoke(cli.app, ["serve", "--help"])
+
+    assert result.exit_code == 0
+    assert "--host" in result.output
+    assert "--port" in result.output
+
+
+def test_help_lists_five_subcommands():
+    result = runner.invoke(cli.app, ["--help"])
+
+    assert result.exit_code == 0
+    for name in ["add", "remove", "list", "fetch", "serve"]:
+        assert name in result.output

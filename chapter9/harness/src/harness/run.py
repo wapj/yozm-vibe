@@ -31,8 +31,12 @@ def parse_args() -> Path:
 ROOT = parse_args()  # ② 작업 디렉터리는 외부에서 결정
 DOCS = ROOT / "docs"
 STATE = DOCS / ".cycle_count"  # ③ 사이클 카운터 저장 위치
+DECISIONS = DOCS / "decisions"  # 결정 합의 기록 위치
 
 MAX_ITERATIONS = int(os.environ.get("MAX_ITERATIONS", "50"))
+PLANNER_MODEL = os.environ.get("PLANNER_MODEL", "opus")  # 계획 모델은 교체 가능
+EVALUATOR_MODEL = os.environ.get("EVALUATOR_MODEL", "opus")  # 평가 모델은 교체 가능
+MAX_DECISION_TRIES = 3  # 결정 합의 재시도 상한
 
 
 def log(message: str) -> None:
@@ -65,61 +69,35 @@ def bootstrap_prd() -> None:
     prompt_text = (PROMPTS / "planner_bootstrap.md").read_text(encoding="utf-8")
     cmd = [
         "claude",
-        "--allowedTools",
-        "Read",
-        "Write",
-        "Edit",
-        "Glob",
-        "Grep",
-        "--append-system-prompt",
-        prompt_text,  # ⑤ 부트스트랩만 대화형 + 시스템 프롬프트로 역할 주입
+        "--allowedTools", "Read", "Glob", "Grep",
+        "Edit(docs/**)", "Write(docs/**)",
+        "--append-system-prompt", prompt_text,  # ⑤ 부트스트랩만 대화형 + 시스템 프롬프트로 역할 주입
     ]
     subprocess.run(cmd, cwd=ROOT)
 
-    if not (
-        DOCS / "PRD.md"
-    ).exists():  # ⑥ PRD가 작성되지 않았으면 사이클 시작 전에 멈추기
+    if not (DOCS / "PRD.md").exists():  # ⑥ PRD가 작성되지 않았으면 사이클 시작 전에 멈추기
         log("PRD.md가 작성되지 않았습니다. 종료합니다.")
         sys.exit(1)
 
 
-def clear_done_at_cycle_start() -> None:
-    """사이클 시작마다 docs/DONE을 제거해 Planner가 PRD vs 코드 간극을 재평가하게 한다.
-
-    DONE은 영속 상태가 아니라 Planner의 사이클별 출력 신호다. PRD가 갱신되어
-    새 섹션이 추가됐는데 이전 사이클이 모든 TASKS를 끝냈다는 이유만으로 종료되면,
-    PRD 신규 요구가 영영 반영되지 않는다. 매 사이클 시작 시 DONE을 비우고
-    Planner가 다시 판단하도록 한다(진짜로 끝났으면 Planner가 DONE을 재생성).
-    """
+def clear_done_at_cycle_start() -> None:  # ⑦ 매 사이클 시작마다 DONE 초기화
+    """사이클 시작마다 docs/DONE을 제거해 Planner가 PRD와 코드의 간극을 재평가하게 한다."""
     done = DOCS / "DONE"
     if done.exists():
         done.unlink()
-        log(
-            "이전 사이클의 docs/DONE을 제거했습니다. Planner가 PRD vs 코드 간극을 재평가합니다."
-        )
+        log("이전 사이클의 docs/DONE을 제거했습니다. Planner가 PRD와 코드의 간극을 재평가합니다.")
 
 
-def run_agent(
-    name: str,
-    prompt_file: str,
-    allowed_tools: list[str],
-    accept_edits: bool = False,
-    model: str | None = None,
-) -> int:
+def run_agent(name: str, prompt_file: str, allowed_tools: list[str],
+              accept_edits: bool = False, model: str | None = None) -> int:
     prompt_path = PROMPTS / prompt_file
     prompt_text = prompt_path.read_text(encoding="utf-8")
 
-    cmd = [
-        "claude",
-        "-p",
-        prompt_text,
-        "--allowedTools",
-        *allowed_tools,
-    ]  # ⑦ 사이클용 비대화형 호출
+    cmd = ["claude", "-p", prompt_text, "--allowedTools", *allowed_tools]  # ⑧ 사이클용 비대화형 호출
     if accept_edits:
         cmd += ["--permission-mode", "acceptEdits"]
     if model:
-        cmd += ["--model", model]  # ⑧ 에이전트별 모델 지정
+        cmd += ["--model", model]  # ⑨ 에이전트별 모델 지정
 
     log(f"--- {name} 시작 (model={model or 'default'}) ---")
     result = subprocess.run(cmd, cwd=ROOT)
@@ -127,31 +105,74 @@ def run_agent(
     return result.returncode
 
 
+def read_choice(path: Path) -> str | None:
+    """선택 파일의 첫 줄에서 "선택: {라벨}"을 읽어온다."""
+    if not path.exists():
+        return None
+    lines = path.read_text(encoding="utf-8").strip().splitlines()
+    if not lines or not lines[0].startswith("선택:"):
+        return None  # 형식이 어긋난 기록은 미기록으로 취급
+    return lines[0].split(":", 1)[1].strip()
+
+
+def resolve_decisions() -> None:  # ㉑ 결정 합의의 상태 기계
+    """블라인드로 기록된 두 선택을 비교해 합의, 재시도, HALT를 판정한다."""
+    if not DECISIONS.exists():
+        return
+    for topic in sorted(DECISIONS.glob("*.md")):
+        if topic.name.endswith((".planner.md", ".evaluator.md")):
+            continue
+        stem = topic.name[:-3]
+        p_file = DECISIONS / f"{stem}.planner.md"
+        e_file = DECISIONS / f"{stem}.evaluator.md"
+        p_choice, e_choice = read_choice(p_file), read_choice(e_file)
+        if p_choice is None or e_choice is None:
+            continue  # 아직 한쪽이 기록하지 않음
+        text = topic.read_text(encoding="utf-8")
+        tries = text.count("합의 불발") + 1
+        if p_choice == e_choice:
+            topic.write_text(text + f"\n합의: {p_choice} (시도 {tries}회)\n",
+                             encoding="utf-8")
+            log(f"결정 합의: {stem} → {p_choice}")
+        elif tries >= MAX_DECISION_TRIES:
+            halt = (f"결정 합의 {MAX_DECISION_TRIES}회 불발: {stem}\n\n"
+                    f"[planner]\n{p_file.read_text(encoding='utf-8')}\n\n"
+                    f"[evaluator]\n{e_file.read_text(encoding='utf-8')}\n")
+            (DOCS / "HALT").write_text(halt, encoding="utf-8")
+            log(f"결정 합의 불발로 HALT: {stem}")
+        else:
+            topic.write_text(text + "\n합의 불발. 후보를 처음부터 다시 나열하고 "
+                                    "장단점을 비교한 뒤 결정하라.\n",
+                             encoding="utf-8")
+            log(f"결정 합의 불발({tries}회): {stem} — 재시도")
+        p_file.unlink()
+        e_file.unlink()  # 선택 파일을 지워 다음 시도도 블라인드로 시작
+
+
 def main() -> int:
     DOCS.mkdir(exist_ok=True)
-    log(f"작업 디렉터리: {ROOT}")  # ⑨ 어느 디렉터리에서 일하는지 명시
-    bootstrap_prd()  # ⑩ 사이클 시작 전 PRD 부트스트랩
+    log(f"작업 디렉터리: {ROOT}")  # ⑩ 어느 디렉터리에서 일하는지 명시
+    bootstrap_prd()  # ⑪ 사이클 시작 전 PRD 부트스트랩
 
-    start = load_cycle_count()  # ⑪ 이전 실행 이어받기
+    start = load_cycle_count()  # ⑫ 이전 실행 이어받기
     if start > 0:
         log(f"이전 실행에서 {start} 사이클까지 진행되었습니다. 이어서 시작합니다.")
 
     for i in range(MAX_ITERATIONS):
-        iteration = start + i + 1  # ⑫ 누적 사이클 번호
+        iteration = start + i + 1  # ⑬ 누적 사이클 번호
         log(f"=== 사이클 {iteration} 시작 ===")
 
-        clear_done_at_cycle_start()  # ⑫-1 PRD 갱신을 반영하기 위해 매 사이클 DONE 초기화
+        clear_done_at_cycle_start()  # ⑭ PRD 갱신을 반영하기 위해 매 사이클 DONE 초기화
 
-        # 1. Planner — 추론이 많은 역할이므로 기본 모델(opus) 사용
-        run_agent(
-            "planner",
-            "planner.md",
-            allowed_tools=["Read", "Write", "Edit", "Glob", "Grep"],
-        )  # ⑬ Planner: Bash 제외
+        # 1. Planner — 추론이 많은 역할이라 기본 opus, PLANNER_MODEL로 교체 가능
+        run_agent("planner", "planner.md",
+                  allowed_tools=["Read", "Glob", "Grep",
+                                 "Edit(docs/**)", "Write(docs/**)"],
+                  model=PLANNER_MODEL)  # ⑮ Planner: Bash 제외, 편집은 docs/만
 
-        if (DOCS / "DONE").exists():  # ⑭ Planner 직후 종료 신호 확인
+        if (DOCS / "DONE").exists():  # ⑯ Planner 직후 종료 신호 확인
             log("PLAN의 모든 항목이 완료되었습니다. 종료.")
-            save_cycle_count(iteration)  # ⑮ 종료 직전 카운터 저장
+            save_cycle_count(iteration)  # ⑰ 종료 직전 카운터 저장
             return 0
         if (DOCS / "HALT").exists():
             log("사람의 개입이 필요합니다. docs/HALT를 확인하세요.")
@@ -159,23 +180,24 @@ def main() -> int:
             return 1
 
         # 2. Generator — sonnet 사용
-        run_agent(
-            "generator",
-            "generator.md",
-            allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
-            accept_edits=True,
-            model="sonnet",
-        )  # ⑯ Generator: 편집 자동 승인 + sonnet
+        run_agent("generator", "generator.md",
+                  allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
+                  accept_edits=True,
+                  model="sonnet")  # ⑱ Generator: 편집 자동 승인 + sonnet
 
-        # 3. Evaluator — sonnet 사용
-        run_agent(
-            "evaluator",
-            "evaluator.md",
-            allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
-            model="sonnet",
-        )  # ⑰ Evaluator: sonnet
+        # 3. Evaluator — 기본 opus, EVALUATOR_MODEL로 교체 가능
+        run_agent("evaluator", "evaluator.md",
+                  allowed_tools=["Read", "Glob", "Grep", "Bash",
+                                 "Edit(docs/**)", "Write(docs/**)"],
+                  model=EVALUATOR_MODEL)  # ⑲ Evaluator: 편집은 docs/만
 
-        save_cycle_count(iteration)  # ⑱ 매 사이클 끝마다 카운터 저장
+        resolve_decisions()  # ㉒ 두 기록이 모두 모인 사이클 말미에 합의 판정
+        if (DOCS / "HALT").exists():
+            log("사람의 개입이 필요합니다. docs/HALT를 확인하세요.")
+            save_cycle_count(iteration)
+            return 1
+
+        save_cycle_count(iteration)  # ⑳ 매 사이클 끝마다 카운터 저장
         log(f"=== 사이클 {iteration} 종료 ===")
         time.sleep(3)
 

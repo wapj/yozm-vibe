@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}피드 관리 - rss-wiki{% endblock %}
+{% block content %}
+<h1>피드 관리</h1>
+
+{% if error %}
+<div class="state state-error" role="alert">
+  <p>{{ error }}</p>
+</div>
+{% endif %}
+
+<form class="feed-form" method="post" action="/feeds-admin/add">
+  <label for="feed-url">피드 URL</label>
+  <input type="url" id="feed-url" name="url" placeholder="https://example.com/feed.xml" required>
+  <button type="submit" class="button button-primary">등록</button>
+</form>
+
+{% if feeds %}
+<ul class="feed-list">
+  {% for feed in feeds %}
+  <li class="feed-list__item">
+    <div class="feed-list__info">
+      <p class="feed-list__name">{{ feed.name }}</p>
+      <p class="feed-list__url">{{ feed.url }}</p>
+    </div>
+    <form method="post" action="/feeds-admin/remove">
+      <input type="hidden" name="target" value="{{ feed.url }}">
+      <button type="submit" class="button button-danger">삭제</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="state state-empty">
+  <p>등록된 피드가 없습니다.</p>
+</div>
+{% endif %}
+{% endblock %}
