@@ -1,0 +1,6 @@
+.loop/
+.pytest_cache/
+.venv/
+.todo-loop.lock
+__pycache__/
+workspace/

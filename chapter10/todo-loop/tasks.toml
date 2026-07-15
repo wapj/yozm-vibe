@@ -1,0 +1,35 @@
+[[tasks]]
+id = "CALC-001"
+title = "WELCOME10 쿠폰을 적용한다"
+marker = "TODO[CALC-001]"  # ① 소스 코드의 TODO와 연결
+check = "checks/test_acceptance.py::test_calc_001_coupon"
+max_attempts = 2  # ② 작업별 시도 상한
+depends_on = []
+description = "WELCOME10이면 총액에서 10%를 할인한 뒤 100원 단위로 내린다. 알 수 없는 쿠폰은 총액을 바꾸지 않는다."
+
+[[tasks]]
+id = "CALC-002"
+title = "무료 배송 기준을 적용한다"
+marker = "TODO[CALC-002]"
+check = "checks/test_acceptance.py::test_calc_002_shipping"
+max_attempts = 2
+depends_on = []
+description = "할인 뒤 금액이 50,000원 이상이면 배송비는 0원이고, 그보다 적으면 3,000원이다."
+
+[[tasks]]
+id = "CALC-003"
+title = "승인된 USD 기준 환율을 적용한다"
+marker = "TODO[CALC-003]"
+check = "checks/test_acceptance.py::test_calc_003_exchange_rate"
+max_attempts = 2
+depends_on = []
+description = "EXPECTED_USD_RATE에 운영팀이 승인한 환율이 있으면 USD에 적용하고, 다른 통화는 None을 반환한다. 승인값이 없으면 추측하지 말고 사람에게 넘긴다."
+
+[[tasks]]
+id = "CALC-004"
+title = "최종 결제 금액을 계산한다"
+marker = "TODO[CALC-004]"
+check = "checks/test_acceptance.py::test_calc_004_order_total"
+max_attempts = 2
+depends_on = ["CALC-001", "CALC-002"]  # ③ 선행 작업
+description = "상품 합계에 쿠폰을 적용한 뒤, 할인된 금액을 기준으로 배송비를 더한다."

@@ -13,6 +13,7 @@ dependencies = [
 ]
 
 [tool.uv.workspace]
+exclude = ["chapter10/todo-loop"]
 members = [
     "projects/ch04-horse-racing",
     "projects/ch07-nanobanana",

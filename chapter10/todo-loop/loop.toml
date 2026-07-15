@@ -1,0 +1,6 @@
+[loop]
+max_calls = 8  # ① 전체 작업자 호출 상한
+max_turns = 6
+max_cost_usd = 0.50  # ② Claude Code 호출당 비용 상한
+worker_timeout_seconds = 300
+verify_timeout_seconds = 20

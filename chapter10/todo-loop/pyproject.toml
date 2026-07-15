@@ -1,0 +1,14 @@
+[project]
+name = "todo-loop"
+version = "0.1.0"
+description = "10장 루프 엔지니어링 실습"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
