@@ -659,6 +659,699 @@
         "collected_date": "2026-07-07",
         "feed_name": "주요 뉴스 - Google 뉴스"
       }
+    },
+    "https://news.hada.io/topic?id=31239": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-kokoro로-로컬-cpu에서-고품질-tts-실행하기.md",
+        "title": "Kokoro로 로컬 CPU에서 고품질 TTS 실행하기",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31238": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-trusted-publishing을-패키지-신뢰-신호로-보면-안-됨.md",
+        "title": "Trusted Publishing을 패키지 신뢰 신호로 보면 안 됨",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31233": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-dua-lipa-포르투갈에-금서-검열-도서-도서관-개관.md",
+        "title": "Dua Lipa, 포르투갈에 금서·검열 도서 도서관 개관",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31232": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-eu-판매되는-모든-차량에-운전자-모니터링-카메라-의무화.md",
+        "title": "EU, 판매되는 모든 차량에 운전자 모니터링 카메라 의무화",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31231": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-chat-control-1-0과-2-0-설명.md",
+        "title": "Chat Control 1.0과 2.0 설명",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31230": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-운동복-반바지-조임끈을-더-잘-묶는-방법-동영상.md",
+        "title": "운동복 반바지 조임끈을 더 잘 묶는 방법 [동영상]",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31229": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-98-는-그리-많지-않음.md",
+        "title": "98%는 그리 많지 않음",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31228": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-microsoft-id-software의-idtech-팀-해고.md",
+        "title": "Microsoft, id Software의 idTech 팀 해고",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31227": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-eu-의회-chat-control-1차-관문-통과.md",
+        "title": "EU 의회, Chat Control 1차 관문 통과",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31226": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-streetcomplete-작은-퀘스트로-openstreetmap-고치기.md",
+        "title": "StreetComplete: 작은 퀘스트로 OpenStreetMap 고치기",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31225": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-루프-시작하기.md",
+        "title": "루프 시작하기",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31224": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-30-papers-일리야-서츠케버-추천-ai-핵심-논문-목록-요약.md",
+        "title": "30 Papers - 일리야 서츠케버 추천 AI 핵심 논문 목록 요약",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31223": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-no-mistakes-git-push-할-때-실수를-방지하기.md",
+        "title": "no-mistakes - git push 할 때 실수를 방지하기",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31222": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-더-건강한-clippy를-위한-공동-리뷰-제안.md",
+        "title": "더 건강한 Clippy를 위한 공동 리뷰 제안",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31221": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-google-기후를-위협하는-디지털-비대화의-지수적-경로.md",
+        "title": "Google, 기후를 위협하는 디지털 비대화의 지수적 경로",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31220": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-odin-1-0-odin-2027-로-2027년-1월-출시-예정.md",
+        "title": "Odin 1.0, ‘Odin 2027’로 2027년 1월 출시 예정",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31219": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-코딩-배우기는-여전히-가치-있다.md",
+        "title": "코딩 배우기는 여전히 가치 있다",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31218": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-ternlight-브라우저-wasm-에서-실행되는-7mb-임베딩-모델.md",
+        "title": "Ternlight - 브라우저(WASM)에서 실행되는 7MB 임베딩 모델",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31217": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-reactos-오픈소스-windows-프로젝트-half-life-2-실행-가능해짐.md",
+        "title": "ReactOS “오픈소스 Windows” 프로젝트, Half-Life 2 실행 가능해짐",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31216": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-show-gn-gh-attach-cli로-github-이슈-pr에-이미지-파일-첨부하기.md",
+        "title": "Show GN: gh-attach – CLI로 GitHub 이슈/PR에 이미지, 파일 첨부하기",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "https://news.hada.io/topic?id=31214": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-sneakerweb-물리-저장-매체로-전파되는-병렬-웹.md",
+        "title": "sneakerweb - 물리 저장 매체로 전파되는 병렬 웹",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-08",
+        "feed_name": "GeekNews - 개발/기술/스타트업 뉴스 서비스"
+      }
+    },
+    "CBMiZ0FVX3lxTFBzYjgtWUpWRWx6ZjNLdUtsWm5PbEpPMUZOSEpUNzI1UVhuUG9TMDRXd2FCWjZfbnBnSk9JZGJaZmpmQTQ2cW9IaWdYSTBydE9NRHBfLWZycWlkdmlLelVpYTJJaFdTTHc": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-트럼프-아마-오늘밤-다시-이란-공격-해상봉쇄-재개도-연합뉴스tv.md",
+        "title": "트럼프 \"아마 오늘밤 다시 이란 공격…해상봉쇄 재개도\" - 연합뉴스TV",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMieEFVX3lxTE94bHh5NVp0bG9ScU90WndNUVBzdmJIWHVQWk9ESmRacmdYeGxVTVNxamZ6NkxKeHRydzFJek5hUzJaSFFYQnRIQml0cWZ5YzA0dWdmdlh4V25tVFNDRzhOaGZJRUpFSmFJZGUyTEdjb1JNSlpZYk5zOdIBeEFVX3lxTFBBeG9sdm9BUGVpTllPUm9JSzhzdy1MdHRPVnZuTzFjNm10RmN2ZGl3TlNlcEdkZTBLc2RlMDBmaEZXOGliMFlVVFFtdUJKMGtiSjlid0x4a0VUZXJBX0JTVlYzQmVRMmRfb3p1d3ZWclNFZzhkUFhTeQ": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-이-대통령-나토-만찬서-트럼프-만나-군용선박-건조-후속-협의-골프-회동-도-추진-mbc-뉴스.md",
+        "title": "이 대통령, 나토 만찬서 트럼프 만나 '군용선박 건조' 후속 협의‥'골프 회동'도 추진 - MBC 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiW0FVX3lxTE1yVGFobW1BMW9Pdnc1RlV3TmpMeUVMRmp5TE1EaWZBelhxSE1IZTlielJJY1JpV3M4LXdIUzlvUGxzWXA2RjlFcnFyVnJpZkd2OFplZFhzcFBlalk": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-국민의힘-사관학교-졸속-통합-안-돼-안규백-사퇴해야-kbs-뉴스.md",
+        "title": "국민의힘 “사관학교 졸속 통합 안 돼…안규백 사퇴해야” - KBS 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZ0FVX3lxTE1SVXQxbGRzUE5adVJyd3p4cklxb25DZnFtLUNPcWx6Z21IdEtlc1hjLXg4cDd4WFlfZG1tNE9veDV6VU5obzE0R1hVVDh1b0JxVFNnNjhGTHVzQVprQm5PQVNRUUVRZWM": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-창문-닫다-강풍에-휩쓸려-후베이-토네이도에-일가족-3명-추락사-연합뉴스tv.md",
+        "title": "“창문 닫다 강풍에 휩쓸려“…中 후베이 토네이도에 일가족 3명 추락사’ - 연합뉴스TV",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidEFVX3lxTFAtWTV0elUydXJHNkxjVEpUOVdvOF9McS1PNmxDWUk1SHI4am56WkNnM1BQRjVycnJaUHF6Nm1nSzNDLTF0REdiLWpfRFZkblk4U3JlV3BNdUFKZFRQREJJR3J0T3k2TFgwb25GTTlYR2dEcVB3": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-이-대통령-젤렌스키와-북한군-포로-논의-트럼프와-군용-선박-후속-협의-한겨레.md",
+        "title": "이 대통령, 젤렌스키와 북한군 포로 논의…트럼프와 ‘군용 선박’ 후속 협의 - 한겨레",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidkFVX3lxTE5jQ2YwUmpvNTJ2S3hDUDdLOGIxN2tRM3Z6X0c4YWs1RGNlVllfR1h0TDdlZFRBbnU4OHBGQjVvS183MkJPWGFHbm5LNFFKQzd3RlNWSWkzai1ZRU1WclVnSXo5aGdHQmdab2UzaVpka3djR29ON2fSAWZBVV95cUxPNjdJVzNNNnB1SnhZNFV0ZDR1XzVlUk9xaG5WVTE3LWVWSW00TllHaWdSaXRPeFF1YkM5MjFCUlY2OHk4RGI0NV9KRW9kMnlwcWlsZktiSEhDanZtTWpTN3BBZ01lenc": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-배달라이더는-법이-보호하는-근로자-법원-첫-판결-나왔다-동아일보.md",
+        "title": "“배달라이더는 법이 보호하는 근로자”…법원 첫 판결 나왔다 - 동아일보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMieEFVX3lxTE1hRklFV3YtYkJlTDBmRm1hM2hWdjA4VUZ5azMyQmo2Z3pQdVQwZ0pYeGl2c203cy14MGpTQmlyT0Z0VEZNZWNHVVJlNTNuVHRKajM4eGlxcjltSG9rWU9pSEszaEJpeldnb1IxaTdxdlJ5cXBlcHIyU9IBeEFVX3lxTE03alA2U1JBUXpISUVySTIyNEhsTGktUXh5Tk95VHpDWkFaaUFwbXlfNUJ5NVdEdmd0VDdDdUVkWWJjN1BtOU9zeVZVNzRFd0VsQVltZDVOckF5d1RTVHQzWHdwYmZRalRLMFJCRTNnNk12Ym5xUVR2OA": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-국회-법사위-보완수사권-폐지-형소법-개정안-소위-회부-mbc-뉴스.md",
+        "title": "국회 법사위, '보완수사권 폐지' 형소법 개정안 소위 회부 - MBC 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiW0FVX3lxTE9nVnlaeThrNm1BMC1SUlRnbGR6MUF1OER3aDFldkY1U3FnN0Z0b0tPYUR6dVBEN0pmb2N4eFF5REJsMFNQMzJrV1A5eUVxRjdycm5ld0w4bnc3akXSAWBBVV95cUxNUW9fM3U2OG8zT2RIZGxkMFdsSFdjZ1RnanhFWnJNdTkyOWVuRTB4MnZKUlRkOGNZODlsekV3VFJoOUZ0VlR1MWNzV1MtaTc4RWcweGpicHBCUE8taEpkRng": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-경찰-특별수사팀-여고생-살해범-장윤기-아버지-첫-소환-조사-연합뉴스.md",
+        "title": "경찰 특별수사팀, 여고생 살해범 장윤기 아버지 첫 소환 조사 - 연합뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE8wVnZNa3pobWtaeEJJMHB3cHo1V0pPMVQzdHhvWnFsQk9DMF9EMHlpeVhWRV90NC04LU80amV4UTZ6dXRGUjh5dXdfNFNsNzlUUVJRVFZxeGpJd9IBX0FVX3lxTFB5Z3JoaGQzYklaeG1feVozVzFEYlVYUEJQeGVXSTRDTDlVb0pxNFNENWg5MnhlSE1vcWJWaDFOeEtHRXNKeUVsRTBQOVREWEdZVDZZbGtLa2dWMDJDZVRj": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-정이한-전-개혁신당-부산시장-후보-구속-음료테러-자작-혐의-경향신문.md",
+        "title": "정이한 전 개혁신당 부산시장 후보 구속···‘음료테러’ 자작 혐의 - 경향신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZkFVX3lxTE16TTNsNzBfMEZTY0ViVUVEcGgwc0pDTWduNnFRQ241aEtvLU5lX0k5TzJVUjhTTzdUa29jOGNITFdVZFJoVk95RXNTQXRvRTQtUzI2ajlCZS1EWVFwN01qTHN4VkZIUQ": {
+      "processed_at": "2026-07-08T15:06:37.407004+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-왜-광주일고-가-아닌-배재고-에-감정이입하나-권태호-칼럼-한겨레.md",
+        "title": "왜 ‘광주일고’가 아닌 ‘배재고’에 감정이입하나 [권태호 칼럼] - 한겨레",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMia0FVX3lxTE1DWjMxT292aWJILUNBUmY4UnJmVUZFY0hMblY0OFczRXR1azFPR1NaOXlzcXRxWUtDX0Nuc1c1Zmk1TV95b3NCeTloU3k1NVJTM04xYWUwREc3QTJpVGswZE9lNzlVNWJpck0w": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-한-루마니아-정상회담-이-대통령-방산협력-진전-특별한-의미-한겨레.md",
+        "title": "한-루마니아 정상회담…이 대통령 “방산협력 진전, 특별한 의미” - 한겨레",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiXkFVX3lxTE0xTHNmV29YQVkweFI2ZlNVNUVzdGh6VUE5LURrQlhzUVJ3WldBTDlRWHg4OTE1N3ZMWkV3TGNZZFgxOEtnYmE4cFVrZy1ObTRYVzU3MGNEQ3oxbXRyRFE": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-박수현-지사-호우-과잉-선제-대응-주문-한국방송뉴스.md",
+        "title": "박수현 지사 “호우 과잉·선제 대응” 주문 - 한국방송뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE9BWUxQclA5T1R0ZmpnaWwyZmQtRTc2WEhiQU50ajliTEFJaWxXZG96ZWNxTlE2S3dLVFFmNURGb1l6UlcxNnBNWU9BYnBjRDY3cFVmSWFtRFJNZ9IBX0FVX3lxTFBPUW0yV2JXMmM1N19xNmRpcm9odDVYcVhkYXZ0VkdrazZkQTB3OXVWOXlkQVVCTFp4OTBtYzRoNU9kYTcyU091bTM2VnpoNzZ3YTVIdmdzNEN5LWVEWVJJ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-이-대통령-젤렌스키와-첫-정상회담-1억달러-지원하되-살상무기는-제외-경향신문.md",
+        "title": "이 대통령, 젤렌스키와 첫 정상회담…1억달러 지원하되 살상무기는 제외 - 경향신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE1TcWY0X2NsWU9jYXRjRFliRGZpTVRnZVpkeWhZcTFwLWJ4YUx6WE5NWnF5UG0xbVA0dFcxMHhJSHJoMmcwX2ZWZGJQcFdHM290dVNEaXlmOG5ZUQ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-장윤기가-휴대폰-버린-위치-부친이-수사팀장에-확인받았다-경향신문.md",
+        "title": "장윤기가 휴대폰 버린 위치, 부친이 수사팀장에 확인받았다 - 경향신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidEFVX3lxTFBBaU9abVMyU3g1VWZOLWt5eXBQU2NReGR4eVNJMUs0dE83TTdFR1RtVmhFS29nb2MzOW5mSFNuRGpqdXFNUnlWMVNVdy10Y1E4NGhlNi1wNnBZN1JsSE9GNnlFTmVyQWtnZGJFVDB5TDJvUGRf0gF0QVVfeXFMUFBPa0FVYkl5MnRvS2w0UXp6dl95R25MVFd3M2s2UkpOeTZIb3FIQnhPVWpGVjlyNjBXV25TRGV4cWV3SE5JOUxqTldiVWVKdllRM0E3WFNZcWhnQzN5aHZxU0E5VGpwZWJObDFxMHE5OVMwSm8": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-숟가락-던지고-악-쑥대밭-중국-향해-또-눈-부릅-mbc-뉴스.md",
+        "title": "숟가락 던지고 \"악!\" 쑥대밭‥중국 향해 또 '눈 부릅' - MBC 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMihgFBVV95cUxQa1VNdlVRWGp6NWtsRE9iZWdxRS1zYmZLc1NWUTdialF5Y0VzOTZKWjJadnVGNlBfVU55amZpdE9xRTBiZS1GTlNZVXQtMURGVVNYNGFoRlZBTTJxU2xFNHBQYjFvTDlHdDQtNHZURzJadklYeERsTU1PT2ZzRW1vdkdpNkRUZw": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-법사위-단독-강행-보완수사권-폐지-상정-조선일보.md",
+        "title": "與 법사위 단독 강행... ‘보완수사권 폐지’ 상정 - 조선일보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE9Dd1RfTlozRHdndlNJNXZ2eWhhMUJUVUU5T1kySS1kZEx5WGR5YV83bllvdjNLVjdadHVmNnUtckw3a2NHeVNiVUdrVFNBUHRpZHhHdXVra2luUdIBVEFVX3lxTFBYYko5SjY3VHNpSjVPdXAtamJfa0YwaUhZaGlCaUxkX2NVcGpYUHFBRHItOUdhRzRRclhvaGdiOWNRZzFVbnR4aGpuemk0STZ1WTloWg": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-스벅-구호-논란-배재고-야구부-6개월-출전정지-재심-청구-한국경제.md",
+        "title": "'스벅 구호 논란' 배재고 야구부 '6개월 출전정지' 재심 청구 - 한국경제",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMieEFVX3lxTE96ZUg4NTdzaHJtMnFQQ2RHR19TQUdrN2trY0hGeW1IRmp6Q04zT29BMl9MTWtCUVJPREdnajRWTnNNcE85QzVIUlFnUGFvLWNmWExhdGU0LVBtZnl0VmhscUljMS1SNzVqcXBZeHl3ZUpBYk1ZNDlMWdIBeEFVX3lxTFB4NEFkekNfdFlJS2xQM1RGRE1pZlExSXlRRDZEOV9Hb2ZUMnkxU0FhR0VJaWE4Sk53WG1zNUgxUHNhZEMyTWlzQXNuZ1Q1WnE4N0s3M3lqNl90Yl81Njd3R3ljOVV6c21OUjhjZjN5UmprUnlEMG8wZw": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-조경태-당-윤리위에-장동혁-대표-제소-독선-독재가-당-뿌리-흔들어-mbc-뉴스.md",
+        "title": "조경태, 당 윤리위에 장동혁 대표 제소‥\"독선·독재가 당 뿌리 흔들어\" - MBC 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE9KNXVsa3hldXlCdzdHQ0xiZmMtTF9GclNvRVJFRWVUbm00SGkyQjVfWGRYVFotWjVUanVObndXNFhvS3E5TVVseG5NSXphbFBPUlk5R3VNQkhNZ9IBWEFVX3lxTE4zemQ5Ry1WZFlqUEcyaFdYTlp3MFNZb3BxQXVOZUNiYVV0LXNIN0hrR2pkcFozSXN6RnhmeVlBRFhPc2lDd2sxUG81OE9KWWlZU2tjYUhxTEg": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-트럼프-이란과-mou-끝났다고-본다-상대하는-건-시간-낭비-아주경제.md",
+        "title": "트럼프 이란과 MOU 끝났다고 본다…상대하는 건 시간 낭비 - 아주경제",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMikAFBVV95cUxNM3JCSmUtd0dMRVBZWjlOTXlONmVNekQ2b1p5dG1DcXQxejF2d2NzQmhQQTVpQ0JwVDE5UmhnMUV1WGNJcXFQVnBLQVVwQU5fQmswc045dmQtbEhtODF4S1FTZkJmTVVEVFN5Z0RTSUdjMUdscE5xN1diY2FTaEJVQ1BRMFA3ZmhlY3lLZ0tKbUw": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-대통령-바이킹-노젓기-세리머니-노르웨이-총리에-월드컵-8강-축하-조선일보.md",
+        "title": "李대통령 ‘바이킹 노젓기’ 세리머니... 노르웨이 총리에 “월드컵 8강 축하” - 조선일보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMicEFVX3lxTE1yOVdVSVpSX01Lazc0UnZ6THdhTV9IOTduMENYMEpIWUlRN0lkUVBwcUVWUlhOQ05ZQXJFd2dEUXZfbGlRWGM4N3RTd084SzNKT3R1OHU3OFhLaDJpUjYyeDJiaUhvZlBJcjZ1eGRhQmw": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-푸틴-이번에도-못-막았다-2500-날아-쾅-신기록-세운-우크라-드론-밀리터리-나우뉴스.md",
+        "title": "푸틴, 이번에도 못 막았다…2500㎞ 날아 ‘쾅’, 신기록 세운 우크라 드론 [밀리터리+] - 나우뉴스",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiW0FVX3lxTFBZWVJMTi1ZZmFETkhxS0c3TUVOS2xCclRXeHZrSWlZY3hXRmVGd01NZmlGTklmREdYU2w3VVpwTG5seW1ZcWp6cVNGelFkak92VzZLU1JaMHZTMnfSAWBBVV95cUxPREdscHF5dGhyUV9vNU9ldERJUmlFVjZDZkFUNW5TblB3cTFtdGs0R1Y4dHNOODZvcGZHVnNFTEhHQzJocUVFSGU3ODFxYUpXVlRQZWdPOGVIQzBZOE1wUUM": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-07-네타냐후-트럼프와-밀착-에르도안에-필요할-때만-에-미소-연합뉴스.md",
+        "title": "네타냐후, '트럼프와 밀착' 에르도안에 \"필요할 때만 美에 미소\" - 연합뉴스",
+        "published": "2026-07-07",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZ0FVX3lxTE5leXM5Ylpsd1A1ak1DREQ3SkFhZ2s0SU5VcEhaWjYxZjkxQ2RGN3pkbGNZeFY5cHNZMEpoVHpLNG1XNDRsMndERGkyMXRfaGpoc05MVV9UT0NNVUxsX2luUjNmVllRNU0": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-코스피-코스닥-5-급락-잇단-매도-사이드카-이틀째-폭락-한겨레.md",
+        "title": "코스피·코스닥 ‘5% 급락’ 잇단 매도 사이드카…이틀째 폭락 - 한겨레",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiXkFVX3lxTE9ieGk1YWRxa2FoRHp6aFFTeUdpSEhhdjBXSk1TTU1Bek5Qbnc1Mnc4ZzBwNXhTbDFRczdtR2NaWVZCV2dfTEk0T1BHM2dIZU5YSC0yZEJmTHJaLVVlQnc": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-imf-이란전쟁-여파에-세계성장률-3-0-로-0-1-p-또-하향-조정-ytn.md",
+        "title": "IMF, 이란전쟁 여파에 세계성장률 3.0%로 0.1%p 또 하향 조정 - YTN",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTE5mc0t0cUptNnB0Sjg2clBOZTlFX0lZbU5XS0FVTEJGT2haODgyV1REX0hxSjgtUEtOeS1YZU9iVlpTYUE3b2NuTUFlN0FfNXcwdHZGTERlLWJMd9IBX0FVX3lxTE5XdlRxRWFNRklDZG1VRzZpbmJ6eURVNHpQZ1ltUzVZR1BJR0lKYVBGOHEzQzU4OE9mTU9PUW1acTBBckNBclIxUnR3d2RjcEdxYlMtTmJlWG9WcmJUMUhB": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-자산-10조-넘는-기업-2028년부터-탄소-배출량-공시-경향신문.md",
+        "title": "자산 10조 넘는 기업, 2028년부터 ‘탄소 배출량’ 공시 - 경향신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMia0FVX3lxTE1seWpPQVROcXYycjhLUmdienlRVEYwN0Y1U2U0UnhvVmpQNFowMnZacUVacjUtS0JLM0FqQ2c2dXFOZ3F0MDY1ZlNmelE4cUFRcXJndkJ5SHBUdF9lY2ZZSHpKLXFPRllROFVF": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-캐나다-잠수함-수주-실패-한화오션-현지-교육-조선-프로젝트-철수-해사신문.md",
+        "title": "캐나다 잠수함 수주 실패…한화오션, 현지 교육·조선 프로젝트 철수 - 해사신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMia0FVX3lxTE1Kc1lYVGY2Z1p0M3Y5d2lUalRfNDV4SXVQcFA2dVZoZXZhUlBDcDRkeElQVnlMRjZPODRZTnpnY2tudTFGZjBBdGh0Mkl5RFFOay1maWZYdE00dW96UkptTTBzU3B3WDR4MXhz": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-엔비디아-둠-더-다크-에이지스-레벨레이션-등-최신-게임-dlss-적용-위클리포스트.md",
+        "title": "엔비디아, 둠: 더 다크 에이지스 레벨레이션 등 최신 게임 DLSS 적용 - 위클리포스트",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidkFVX3lxTE9tU0lqLUhHNzBUQXA3SWhvN2ttcVhTbUFhUnpxR3VEdDRNMHlGZ0ZJdWZidjN6VVM0bmR6QW81Z1dZMjRTOHlINU1CUEJaSUxlVldxRjdRMXJ5QnZYeVNMMUt0NG4wYjdVdGdJZW05ZUw4SzdscGfSAWZBVV95cUxNS2ZGQmFTY1BraTI4YXVuQmZxbjVFV2dGSlhwQWNlUWcwd2tsenlNdVlEczRmdDVJeWUwdnFpT1pJRDBoOXhBcnZhandaS3V3Y2w5alpmQ2prTXVIR2JwZ2xubXRNdGc": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-반포한강공원에-피카츄-뜬다-포켓몬-go-축제-개최-동아일보.md",
+        "title": "반포한강공원에 피카츄 뜬다…‘포켓몬 GO’ 축제 개최 - 동아일보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiXkFVX3lxTFA2S2hIVWtqSzhCdkpLTVhIRUF3QjNCeERrb3BVNmdIbWlnSENLUVplYTZvWG1CZGhlSFRXS1pvVG1ZWGZMcjJydE9EbDkyQmlSZGFkMTBxREdHa3RCbXc": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-우주의-속삭임-193-지구-곁을-맴도는-준달-중국-탐사선이-첫-포착-포커스온경제.md",
+        "title": "[우주의 속삭임(193)] 지구 곁을 맴도는 '준달'⋯중국 탐사선이 첫 포착 - 포커스온경제",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiugFBVV95cUxOX05naEZyaHE0UDRFNzJVN0VJSVlOOEVNUEhLTE1GcjB3RlBNMmItcWFPZk5kWWJheFJqVUFDUGxjUnNyV1BFOVZnTzRKVlNIWngtaUlyb1hEWkROSFF1LVVsUHJEdnoxdkxoWXprT19leE5ab1BEUHpFMmd0SUFlYUo3U1NZS3dzd25ESlNMMnJKWWhGMkRpYmkwZ1owUGd4dHVIZ0FTWVNCYzZ3b0lOY2xibWNQOFNXWWc": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-어쌔신-크리드-블랙-플래그-리싱크드-리뷰-ign-korea.md",
+        "title": "어쌔신 크리드 블랙 플래그 리싱크드 - 리뷰 - IGN Korea",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiWkFVX3lxTFBON0Q5aVJKZmZsNTE0dXZfazNKbTZhcnpqSE9sSnFWSEg4a3JzY1dwU01rX3pHNHZsdUwtcWRGczFlWEY4Qk1qOXdZZWlpNFM1WnM5a0h6VVo1Z9IBX0FVX3lxTFB1NXJXTU1LSnRxSVoyV05jcnJpdmx6RXpiSVlpSUE5RnNNUFRScXZGYWlDeWEtRVVlR1FzaDR5UDh3amdYSVFhMFpONXVqcUstald4TEItWjhIRUxVRXZN": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-jtbc-인기-프로-냉부-아는-형님-출연료까지-밀렸다-한연노-대책-촉구에-jtbc-금일-지급-완료-경향신문.md",
+        "title": "JTBC 인기 프로 ‘냉부’ ‘아는 형님’ 출연료까지 밀렸다…한연노 대책 촉구에 JTBC “금일 지급 완료” - 경향신문",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMigAFBVV95cUxPU1M4enV0cUYxRldJU19UWEpYUzROTk41a3BXUzhwUzhxRU9xbjl2TVJiN3BJZXlHMnlWS2oxeEVSRFQzSWVmUHhpUDBDeS1heWNsbmNOZnM1QVVXZGpOdlZtdHRhV3pmOFQyYnR2OU81N0pEY2hjbUh2NHhxSjZXRg": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-과학계-초통령-이선호-집안-빚-100억-청산-비결-유재석-노래에-해답-유퀴즈-starnewskorea-com.md",
+        "title": "'과학계 초통령' 이선호, 집안 빚 100억 청산 비결?..\"유재석 노래에 해답\"[유퀴즈] - starnewskorea.com",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMijwFBVV95cUxNVTgtelZWOGRzbTRtZERDWUt4Zy1kOTFKR1VEQlF1bTRSWFduT0xLT2EyazR1cnJxWS1RejFpM0VxZUtteEtmbk1kbDZaWVNWcE1zVUprS2JFSnNQc0twdmUzbm1HRVdNUEFwZVJmMUNJbmNvSVRaR0x2TG1DLVNqbFQwSGdRVEsxemU3QTZnSQ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-kcm-15년간-숨겼던-딸-언제-아빠딸이라고-발표해-매일-물어-먹먹-슈돌-순간포착-조선일보.md",
+        "title": "KCM, 15년간 숨겼던 딸..\"'언제 아빠딸이라고 발표해?' 매일 물어\" 먹먹(슈돌)[순간포착] - 조선일보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiXEFVX3lxTE54Szc3d2dJbE5fekhpZnhjaUhpVzJ6UzhwWjdZcVJDMUxKTXZTNFRib0VyS3htYVBjMndTX1ZSVGg2N085cUlEcnU5LVBkRXd0UDhBcEJQWkJ6NVRZ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-이정현-새-소속사-이플이엔티-결혼-앞두고-겹경사-뉴스핌.md",
+        "title": "이정현, 새 소속사 이플이엔티行…결혼 앞두고 겹경사 - 뉴스핌",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMidkFVX3lxTE1YeHI5dWFGTFRRaVJaeGRxM01WcEFCR1duTWU5UmdFODFjMG1uVUFRRXJONWpybVNtM1hKT21IUEFRVERsWEFJVjRCREEwbWNoY2dIMS1QLTh1WmUwcFBTd3dWdXpvUjhDYkN4RHUxNFctWDVZYmfSAXZBVV95cUxPZWRNZXZ3R09aWGluSllWUDg0RkZaWF8waUNkN0lPT0tfSVNDN1VxVG9aVnFKdHhsN0toX0tzdG1GVTZkc2Voc3lveVRYdTRWYTk1VDJQRy1rX2phOXlha0FjTDAzZUhMS29oUDcta3hVYUVSQUhn": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-거스-포옛-축구대표팀-감독직-관심-면접-pt-뭐든-좋다-mbc-뉴스.md",
+        "title": "거스 포옛, 축구대표팀 감독직 관심‥\"면접, PT 뭐든 좋다\" - MBC 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiYkFVX3lxTE5RdHl1a0xleWMwNDBHdUdYWldCVnc0c0FQQ2hHaUplazFiYUFjX1pIcEhQWW9nZ055QXQwNGx4dFJLLV9xdkhWTE1OVkZrQUU3cEdXY0Q5MVlON1h1d0xCMTh3": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-월드컵-홀란-케인-맞대결-성사-북중미-월드컵-8강-대진-확정-kbc광주방송.md",
+        "title": "[월드컵]'홀란-케인' 맞대결 성사...북중미 월드컵 8강 대진 확정 - KBC광주방송",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZkFVX3lxTE9XQ1Rqbi0xMjhXV2s2S1V6NmF3TVpvUnZ2NlZXaUx1Xzd0RlV0ZE12XzRfdlg5a0Vwa1phS19rdVpqR0g3NU8tT3pRNWNQNjJ0Y1E2UVhWbm1iQVZIalhMV2k1ZWdhUQ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-홍명보-전-감독-부르면-간다-일본-언론-정치개입-안-돼-kbs-뉴스.md",
+        "title": "홍명보 전 감독 ‘부르면 간다’ 일본 언론 ‘정치개입 안 돼’ - KBS 뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiakFVX3lxTE95cEFPS1ZfeEQ5MUpPRU5qNmNVMm5VR0hCSzBKcEN2VXpyaS1pZ2xFaEZEQnhqTklIRHRoMnU0cFhHRmZScV9aMjRRSTl4bmh0N3lpU3QtX0QwWHByZGxhZFgzVl9OanV6X2c": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-월드컵은-조작됐다-2-0-앞서다-뒤집힌-이집트-아르헨전-판정에-폭발-주간조선.md",
+        "title": "\"월드컵은 조작됐다\"…2-0 앞서다 뒤집힌 이집트, 아르헨전 판정에 폭발 - 주간조선",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMibEFVX3lxTE02dzZaTWZMY3djTXNuZ184bVlFb0RpbGhIYjJfM25LdVNPazJ3NW16cXpZckwwbVY2SnVpakx3WHU2TGtTeFF5UG9VYzJUeUVlX1hwbEJYWHI4LUdQNmU0Yml2S1hJVTVjbVpqUQ": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-소변-냄새로-전립선암-조기-진단하는-방법-개발-메드월드뉴스.md",
+        "title": "소변 냄새로 전립선암 조기 진단하는 방법 개발 - 메드월드뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMiZ0FVX3lxTE1wcVFtVDltWjRxb1djMzB6dFRiVl9DVWxxVm1qbDBkZ2N0MFRNb1B4ek5RQlVCUWRQZnp1d1BYclhhV3JFYVBOX0Q3clhlaTJwV201ajVjNDVuSUMyU0p0bHZXY3hJdk0": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-단식이-잇몸질환-염증-완화에-도움된다-치의신보.md",
+        "title": "단식이 잇몸질환 염증 완화에 도움된다 - 치의신보",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMilwFBVV95cUxObHFIdTBHRjNfSjd0WEdJa1hyOThKdGQ2NW5Rc3dLUDNYaEhTd2Q4Y2d5ekdDOGNlbmVHTHNsenR1ZVA5MjNIcFZZUzBfNEkzRFExWGRMT3ozdXZEUkd1akRrblVRTzN0ejJNTVdNOUdURGw5Vy05UnlyRTJ4QUlJLWJ6RV9hNlc5OE1EVWw2aTQyMTJnZlYw": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-뎅기열-당뇨병-환자-공격-laodong-vn.md",
+        "title": "뎅기열, 당뇨병 환자 공격 - Laodong.vn",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
+    },
+    "CBMibkFVX3lxTE9SSERCbU9xSGpfTEYtLVZLMzhfSW02Rk1RZzgwZXJ5NzRMUVB1eEU2WVdITW1wQmhBcHdMVWZpcTJvVDRHQmNibDBfUTZsZ2NlX1NWUEZfenlmT05TWGZwTTVra0UxOE8xazdBMWl3": {
+      "processed_at": "2026-07-08T15:31:20.943323+00:00",
+      "status": "ok",
+      "meta": {
+        "filename": "2026-07-08-인제대-연구팀-유럽-심장-학회지에-폐경-후-여성-심부전-연구-게재-김해뉴스.md",
+        "title": "인제대 연구팀, 유럽 심장 학회지에 폐경 후 여성 심부전 연구 게재 - 김해뉴스",
+        "published": "2026-07-08",
+        "collected_date": "2026-07-08",
+        "feed_name": "주요 뉴스 - Google 뉴스"
+      }
     }
   },
   "failures": []

@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import time
 from pathlib import Path
 
 
@@ -88,6 +89,8 @@ def claude_worker(task: dict, root: Path, attempt: int, config: dict) -> dict:
     ]
 
     try:
+        print(f"[llm] Claude Code 요청 시작: {task['id']}", flush=True)
+        started = time.monotonic()
         process = subprocess.run(
             command,
             cwd=root / "workspace",
@@ -103,7 +106,11 @@ def claude_worker(task: dict, root: Path, attempt: int, config: dict) -> dict:
         result = payload.get("structured_output")
         if not isinstance(result, dict):
             return {"status": "error", "reason": "구조화된 작업 결과가 없습니다."}
-        print(f"[worker] Claude Code, 추정 비용 ${payload.get('total_cost_usd', 0):.4f}")
+        elapsed = time.monotonic() - started
+        print(
+            f"[llm] Claude Code 응답 수신: {elapsed:.1f}초, "
+            f"추정 비용 ${payload.get('total_cost_usd', 0):.4f}"
+        )
         return {"status": result["status"], "reason": str(result["reason"])}
     except FileNotFoundError:
         return {"status": "error", "reason": "claude 실행 파일을 찾지 못했습니다."}

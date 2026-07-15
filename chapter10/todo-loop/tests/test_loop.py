@@ -40,7 +40,12 @@ def project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return root
 
 
-def run(project: Path, *args: str, env: dict | None = None) -> subprocess.CompletedProcess[str]:
+def run(
+    project: Path,
+    *args: str,
+    env: dict | None = None,
+    input_text: str | None = None,
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, "loop.py", *args],
         cwd=project,
@@ -48,6 +53,7 @@ def run(project: Path, *args: str, env: dict | None = None) -> subprocess.Comple
         encoding="utf-8",
         errors="replace",
         env=env,
+        input=input_text,
     )
 
 
@@ -55,42 +61,27 @@ def state(project: Path) -> dict:
     return json.loads((project / ".loop" / "state.json").read_text(encoding="utf-8"))
 
 
-def test_fixture_reproduces_retry_handoff_and_resume(
-    project: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    assert run(project, "reset").returncode == 0
-    first = run(project, "run", "--worker", "fixture")
+def test_simulation_reproduces_book_flow(project: Path) -> None:
+    result = run(project, "simulate")
 
-    assert first.returncode == 2
-    assert "CALC-002 -> retry" in first.stdout
-    assert "CALC-003 -> needs_human" in first.stdout
-    assert "CALC-004 -> passed" in first.stdout
+    assert result.returncode == 0
+    assert "worker=fixture: LLM 호출 없는 결정적 재현" in result.stdout
+    assert "CALC-002 -> retry" in result.stdout
+    assert "CALC-003 -> needs_human" in result.stdout
+    assert "[requeue] CALC-003 -> pending" in result.stdout
+    assert "[done] 4/4건 완료" in result.stdout
+    assert "4 passed" in result.stdout
     current = state(project)
     assert current["tasks"]["CALC-002"]["attempts"] == 2
-    assert current["tasks"]["CALC-003"]["status"] == "needs_human"
+    assert current["tasks"]["CALC-003"]["status"] == "passed"
     assert current["tasks"]["CALC-004"]["status"] == "passed"
-    assert current["calls"] == 5
+    assert current["calls"] == 6
+    assert not (project / ".loop" / "handoff" / "CALC-003.md").exists()
 
-    monkeypatch.setenv("EXPECTED_USD_RATE", "1325.5")
-    assert run(
-        project,
-        "requeue",
-        "CALC-003",
-        "--reason",
-        "운영팀이 환율을 승인함",
-        env=os.environ.copy(),
-    ).returncode == 0
-    resumed = run(
-        project,
-        "run",
-        "--worker",
-        "fixture",
-        env=os.environ.copy(),
-    )
-
-    assert resumed.returncode == 0
-    assert "[done] 4/4건 완료" in resumed.stdout
-    assert all(item["status"] == "passed" for item in state(project)["tasks"].values())
+    cancelled = run(project, "simulate", input_text="n\n")
+    assert cancelled.returncode == 2
+    assert "[simulate] 취소했습니다." in cancelled.stdout
+    assert state(project) == current
 
 
 def test_failed_change_is_restored_before_retry(project: Path) -> None:
@@ -188,7 +179,7 @@ def test_status_recovers_interrupted_change(project: Path) -> None:
 
 
 def test_claude_worker_limits_tools_and_budget(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     called = {}
 
@@ -224,6 +215,9 @@ def test_claude_worker_limits_tools_and_budget(
     assert "직전 검증 결과:\n부동소수점 오차" in command[2]
     assert "--plugin-dir" not in command
     assert "env" not in called
+    output = capsys.readouterr().out
+    assert "[llm] Claude Code 요청 시작: CALC-001" in output
+    assert "[llm] Claude Code 응답 수신:" in output
 
 
 def test_claude_worker_keeps_cli_error_message(

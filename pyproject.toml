@@ -24,4 +24,7 @@ members = [
     "chapter2/todo-cli",
     "chapter4/quote-cli",
     "chapter9/projects/rss-wiki",
+    "chapter10/ms-port",
+    "chapter10/todo-loop-practice",
+    "chapter10/todo-loop",
 ]

@@ -186,7 +186,12 @@ def run_one(task: dict, state: dict, tasks: list[dict], config: dict, worker: st
     state["calls"] += 1
     save_state(state)
     record("claimed", task["id"], attempt=attempt, worker=worker)
-    print(f"[claim] {task['id']} attempt={attempt}/{task['max_attempts']}")
+    kind = "실제 LLM 호출" if worker == "claude" else "LLM 호출 없음"
+    print(
+        f"[claim] {task['id']} worker={worker} ({kind}) "
+        f"attempt={attempt}/{task['max_attempts']}",
+        flush=True,
+    )
 
     worker_task = {**task, "feedback": item["reason"]}
     result = run_worker(worker, worker_task, ROOT, attempt, config)
@@ -286,6 +291,67 @@ def requeue(task_id: str, reason: str, tasks: list[dict]) -> None:
     print(f"[requeue] {task_id} -> pending")
 
 
+def simulate(tasks: list[dict], config: dict, approved_rate: str, confirmed: bool) -> int:
+    """책의 재시도, 사람 이관, 재등록 흐름을 한 번에 실행한다."""
+    try:
+        if float(approved_rate) <= 0:
+            raise ValueError
+    except ValueError as error:
+        raise ValueError("승인 환율은 0보다 큰 숫자여야 합니다.") from error
+
+    if not confirmed and (WORKSPACE.exists() or RUNTIME.exists()):
+        answer = input("workspace와 .loop를 초기화합니다. 계속할까요? [y/N] ")
+        if answer.strip().lower() not in {"y", "yes"}:
+            print("[simulate] 취소했습니다.")
+            return 2
+
+    worker = "fixture"
+    print("[simulate] worker=fixture: LLM 호출 없는 결정적 재현", flush=True)
+    previous_rate = os.environ.pop("EXPECTED_USD_RATE", None)
+    try:
+        print("\n[1단계] 승인값 없이 루프를 실행합니다.")
+        reset(tasks)
+        first_result = run_loop(tasks, config, worker, once=False)
+        status(tasks)
+
+        current = load_state()
+        report = HANDOFF / "CALC-003.md"
+        if (
+            first_result != 2
+            or current["tasks"]["CALC-003"]["status"] != "needs_human"
+            or not report.exists()
+        ):
+            raise ValueError("CALC-003의 사람 이관 상태를 재현하지 못했습니다.")
+
+        print("\n[2단계] 사람이 확인할 이관 보고서입니다.\n")
+        print(report.read_text(encoding="utf-8"))
+
+        print(f"[3단계] 운영팀 승인값 {approved_rate}를 반영해 다시 실행합니다.")
+        os.environ["EXPECTED_USD_RATE"] = approved_rate
+        requeue(
+            "CALC-003",
+            f"운영팀이 USD 기준 환율 {approved_rate}를 승인함",
+            tasks,
+        )
+        final_result = run_loop(tasks, config, worker, once=False)
+        status(tasks)
+        if final_result != 0:
+            return final_result
+
+        print("\n[4단계] 전체 완료 조건을 다시 검사합니다.", flush=True)
+        acceptance = subprocess.run(
+            [sys.executable, "-m", "pytest", "-q", "checks"],
+            cwd=ROOT,
+            timeout=float(config["verify_timeout_seconds"]),
+        )
+        return acceptance.returncode
+    finally:
+        if previous_rate is None:
+            os.environ.pop("EXPECTED_USD_RATE", None)
+        else:
+            os.environ["EXPECTED_USD_RATE"] = previous_rate
+
+
 def parser() -> argparse.ArgumentParser:
     command = argparse.ArgumentParser(description="TODO 작업을 운영하는 실습용 루프")
     sub = command.add_subparsers(dest="command", required=True)
@@ -296,6 +362,10 @@ def parser() -> argparse.ArgumentParser:
     run.add_argument("--once", action="store_true")
     run.add_argument("--worker", choices=("manual", "fixture", "claude"), default="manual")
     run.add_argument("--max-calls", type=int)
+
+    simulation = sub.add_parser("simulate")
+    simulation.add_argument("--approved-rate", default="1325.5")
+    simulation.add_argument("--yes", action="store_true")
 
     resume = sub.add_parser("requeue")
     resume.add_argument("task_id")
@@ -321,6 +391,8 @@ def main() -> int:
     if args.command == "requeue":
         requeue(args.task_id, args.reason, tasks)
         return 0
+    if args.command == "simulate":
+        return simulate(tasks, config, args.approved_rate, args.yes)
     return run_loop(tasks, config, args.worker, args.once)
 
 

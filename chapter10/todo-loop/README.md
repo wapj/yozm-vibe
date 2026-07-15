@@ -13,6 +13,20 @@ uv run python loop.py reset
 uv run python loop.py status
 ```
 
+## 책의 전체 흐름 한 번에 재현하기
+
+다음 명령은 책에서 설명한 작업 발견, 배정, 검증 실패와 재시도, 사람 이관, 승인값 반영, 재등록, 최종 완료를 차례로 실행합니다.
+
+```bash
+uv run python loop.py simulate
+```
+
+`fixture` 작업자는 LLM을 호출하지 않습니다. 정해진 변경을 적용해 책의 상태 전이를 항상 같은 결과로 재현합니다. 기존 `workspace`나 `.loop`가 있으면 초기화하기 전에 계속할지 묻습니다. 자동 실행 환경에서는 `--yes`를 붙일 수 있습니다.
+
+```bash
+uv run python loop.py simulate --yes
+```
+
 ## 독자가 직접 한 작업 처리하기
 
 ```bash
@@ -23,7 +37,7 @@ uv run python loop.py run --once --worker manual
 
 ## 모든 분기 재현하기
 
-시험용 작업자는 같은 변경을 만들어 정상 완료, 검증 실패 뒤 재시도, 외부 승인 대기를 한 번에 확인하게 합니다.
+시험용 작업자는 Claude Code나 다른 모델을 호출하지 않습니다. 정해진 변경을 만들어 정상 완료, 검증 실패 뒤 재시도, 외부 승인 대기를 한 번에 확인하게 합니다.
 
 ```bash
 uv run python loop.py reset
@@ -51,6 +65,10 @@ uv run python loop.py run --once --worker claude
 ```
 
 컨트롤러는 작업마다 새 Claude Code 프로세스를 시작합니다. 도구는 `workspace/app/calc.py`를 읽고 편집하는 데만 사용하며, 테스트와 완료 판정은 컨트롤러가 별도로 수행합니다.
+
+실제 호출이 시작되면 `[llm] Claude Code 요청 시작`이 표시되고, 응답을 받으면 실행 시간과 추정 비용이 출력됩니다.
+
+검증 결과가 `retry`라면 같은 명령을 한 번 더 실행합니다. 직전 검증 결과가 다음 Claude Code 요청에 전달됩니다.
 
 ## 컨트롤러 검사
 
