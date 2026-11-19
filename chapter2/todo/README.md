@@ -1,5 +1,7 @@
 # todo CLI
 
+책의 2장 실습 경로는 이 디렉터리가 아니라 `chapter2/todo-cli`입니다.
+
 `todos.json`에 영속화하는 할일 관리 CLI입니다. 목록 조작(순수 로직)은 `todo_manager.py`로
 분리하여 `pytest`로 단위 테스트합니다.
 

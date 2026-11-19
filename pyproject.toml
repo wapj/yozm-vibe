@@ -1,30 +1,20 @@
 [project]
-name = "yozm-vibe-antigravity"
+name = "yozm-loop-engineering"
 version = "0.1.0"
-description = "[요즘 바이브 코딩] 안티그래비티 진짜 에이전트 프로젝트 - 예제 코드"
+description = "[요즘 AI] 루프 엔지니어링 예제 코드"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
     { name = "Andy" }
 ]
-dependencies = [
-    "rich>=14.2.0",
-    "typer>=0.21.1",
-]
+dependencies = []
 
 [tool.uv.workspace]
-exclude = ["chapter10/todo-loop"]
 members = [
-    "projects/ch04-horse-racing",
-    "projects/ch07-nanobanana",
-    "projects/ch08-ai-board",
-    "projects/ch09-shorts-factory",
-    "chapter8/rss-wiki",
-    "chapter10/llmops_lab",
     "chapter2/todo-cli",
     "chapter4/quote-cli",
+    "chapter8/rss-wiki",
+    "chapter9/harness",
     "chapter9/projects/rss-wiki",
-    "chapter10/ms-port",
-    "chapter10/todo-loop-practice",
-    "chapter10/todo-loop",
+    "chapter11/llmops_lab",
 ]

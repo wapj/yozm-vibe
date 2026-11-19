@@ -9,11 +9,10 @@
 
 ## 설치
 
-저장소를 클론한 뒤 해당 디렉터리로 이동합니다.
+이 예제는 저장소의 `chapter1/quote-cli`에 있습니다.
 
 ```bash
-git clone <repository-url>
-cd quote-cli
+cd chapter1/quote-cli
 ```
 
 테스트를 실행하려면 pytest를 설치합니다.

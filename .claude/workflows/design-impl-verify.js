@@ -8,7 +8,7 @@ export const meta = {
   ],
 }
 
-const DIR = '/Users/gyus/yozm-ai-agentic/chapter6/quote-cli'
+const DIR = 'chapter6/quote-cli'
 
 const PLAN_SCHEMA = {
   type: 'object',

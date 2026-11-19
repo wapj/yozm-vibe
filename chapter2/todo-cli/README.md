@@ -15,12 +15,12 @@ uv sync
 
 ## 사용법
 
-모든 명령은 `uv run python main.py <서브커맨드>` 형태로 실행합니다.
+모든 명령은 `uv run main.py <서브커맨드>` 형태로 실행합니다.
 
 ### 할일 추가
 
 ```bash
-uv run python main.py add "우유 사기"
+uv run main.py add "우유 사기"
 # 추가됨: 우유 사기 (id=1)
 ```
 
@@ -29,7 +29,7 @@ uv run python main.py add "우유 사기"
 상태별 색상과 기호로 출력합니다.
 
 ```bash
-uv run python main.py list
+uv run main.py list
 # 1. [] 우유 사기
 ```
 
@@ -38,21 +38,21 @@ uv run python main.py list
 지정한 id의 할일을 작업중(진행중) 상태로 바꿉니다.
 
 ```bash
-uv run python main.py start 1
+uv run main.py start 1
 # 작업중으로 변경됨: id=1
 ```
 
 ### 완료 처리
 
 ```bash
-uv run python main.py done 1
+uv run main.py done 1
 # 완료 처리됨: id=1
 ```
 
 도움말은 다음과 같이 확인합니다.
 
 ```bash
-uv run python main.py --help
+uv run main.py --help
 ```
 
 ## 상태 표시
